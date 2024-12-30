@@ -76,20 +76,5 @@ public class RRLimelightTest extends OpMode{
             search = turnLeft.build();
             right = false;
         }
-
-        if(search != null){
-            Actions.runBlocking(
-                    addY(right),
-                    search
-            );
-        }
-    }
-
-    public Action addY(boolean isRight) {
-        if(isRight) {
-            currentY = currentY + 3;
-        } else {
-            currentY = currentY - 3;
-        }
     }
 }

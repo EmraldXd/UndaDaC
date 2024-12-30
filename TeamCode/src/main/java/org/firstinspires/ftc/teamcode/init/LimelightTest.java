@@ -44,9 +44,9 @@ public class LimelightTest extends OpMode{
             double ty = result.getTy(); // How far up or down the target is (degrees)
             double ta = result.getTa(); // How big the target looks (0%-100% of the image)
 
-            if(tx > 8) {
+            if(tx > 4) {
                 mecanumDrive.setPower(0, 0, .5);
-            } else if (tx < -8) {
+            } else if (tx < -4) {
                 mecanumDrive.setPower(0, 0, -.5);
             } else {
                 mecanumDrive.setPower(0, 0, 0);

@@ -22,20 +22,26 @@ public class roller {
     private CRServo rightWheel;
     private CRServo leftWheel;
     private Servo joint;
-    //private ColorRangeSensor sensor;
+    private ColorRangeSensor sensor;
     private boolean up;
     private double DELAY = 0.75;
+    private boolean spin;
+    private boolean spinOut;
+    private boolean lastPress; //This will make sure the intake stops or starts only if the button was released first
     private static final ElapsedTime buttonDelay = new ElapsedTime();
+
     public void init(@NonNull OpMode opmode){
         HardwareMap hardwareMap = opmode.hardwareMap;
         telemetry = opmode.telemetry;
         rightWheel = hardwareMap.get(CRServo.class, "rightW");
         leftWheel = hardwareMap.get(CRServo.class, "leftW");
         joint = hardwareMap.get(Servo.class, "joint");
-        //sensor = hardwareMap.get(ColorRangeSensor.class, "sensor");
+        sensor = hardwareMap.get(ColorRangeSensor.class, "Color Sensor");
         joint.setPosition(0.01);
         joint.setPosition(0);
         up = true;
+        spin = false;
+        spinOut = false;
     }
 
     public void moveRoller(boolean input) {
@@ -51,15 +57,22 @@ public class roller {
     }
 
     public void intake(boolean intake, boolean outtake){
-        if(intake) {
+        if(intake && !clawLoaded() && !spinOut) {
             rightWheel.setPower(1);
             leftWheel.setPower(-1);
-        } else if(outtake) {
+            spin = true;
+        } else if(intake && !spin) {
             rightWheel.setPower(-1);
             leftWheel.setPower(1);
+            spinOut = true;
         } else {
             rightWheel.setPower(0);
             leftWheel.setPower(0);
+        }
+
+        if(!intake) {
+            spin = false;
+            spinOut = false;
         }
     }
 
@@ -69,17 +82,19 @@ public class roller {
         }
     }
 
-    /*public boolean clawLoaded() {
-        if(sensor.getLightDetected() > 0) {
+    public boolean clawLoaded() {
+        if(sensor.getLightDetected() == 1) {
             return true;
         } else {
             return false;
         }
-    } */
+    }
 
     public void telemetry() {
+        telemetry.addData("Right Wheel Power: ", rightWheel.getPower());
+        telemetry.addData("Left Wheel Power: ", rightWheel.getPower());
         telemetry.addData("Current Joint position: ", joint.getPosition());
-        //telemetry.addData("Claw loaded? ", clawLoaded());
-        //telemetry.addData("Current Color: ", sensor.getLightDetected());
+        telemetry.addData("Claw loaded? ", clawLoaded());
+        telemetry.addData("Current Color: ", sensor.getLightDetected());
     }
 }
