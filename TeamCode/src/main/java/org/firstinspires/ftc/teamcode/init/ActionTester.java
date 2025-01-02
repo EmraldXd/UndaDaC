@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.customAction.linearSlideRR;
+import org.firstinspires.ftc.teamcode.customAction.intakeRR;
 
 
 @Autonomous
@@ -24,13 +25,14 @@ public class ActionTester extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         linearSlideRR linearSlide = new linearSlideRR(hardwareMap);
+        intakeRR intake = new intakeRR(hardwareMap);
 
         waitForStart();
 
         Actions.runBlocking(
             new SequentialAction(
-                linearSlide.angleSlidesUp(),
-                linearSlide.angleSlidesDown()
+                linearSlide.runToPosition(2000, 0.5),
+                linearSlide.runToPosition(0, 0.5)
             )
         );
     }
