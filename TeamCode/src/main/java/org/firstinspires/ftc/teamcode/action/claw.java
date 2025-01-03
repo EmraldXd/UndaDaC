@@ -42,7 +42,7 @@ public class claw {
         //Turn Servos on
         clawAngle.setPosition(0);
         clawJoint.setPosition(0);
-        claw.setPosition(.45);
+        claw.setPosition(0);
     }
 
     public void startTime() {
@@ -54,7 +54,7 @@ public class claw {
 
     public void moveClaw(boolean a) {
         if (a && jointDelay.time() > DELAY) {
-            clawJoint.setPosition(up ? .15 : 0 );
+            clawJoint.setPosition(up ? .175 : 0 );
             up = !up;
             jointDelay.reset();
         }
@@ -62,11 +62,11 @@ public class claw {
 
     public void useClaw(boolean isPressed) {
         if (isPressed && delayClaw.time() > DELAY && !isClosed) {
-            claw.setPosition(0.45);
+            claw.setPosition(0.0);
             isClosed = true;
             delayClaw.reset();
         } else if (isPressed && delayClaw.time() > DELAY && isClosed) {
-            claw.setPosition(0.75);
+            claw.setPosition(0.2);
             isClosed = false;
             delayClaw.reset();
         }

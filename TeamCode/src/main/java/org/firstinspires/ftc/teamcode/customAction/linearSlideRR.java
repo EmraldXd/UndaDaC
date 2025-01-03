@@ -65,20 +65,29 @@ public class linearSlideRR {
         private double pow;
 
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if(initialized) {
+            if(!initialized) {
+                this.pos = runPosition;
+                this.pow = runPower;
                 rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                rightSlide.setPower(0.5);
-                leftSlide.setPower(0.5);
+                if (rightSlide.getCurrentPosition() < pos) {
+                    rightSlide.setPower(pow);
+                    leftSlide.setPower(pow);
+                } else if (rightSlide.getCurrentPosition() > pos) {
+                    rightSlide.setPower(-pow);
+                    leftSlide.setPower(-pow);
+                } else {
+                    return true;
+                }
                 initialized = !initialized;
             }
-            if(Math.abs(rightSlide.getCurrentPosition()) > 2000) {
-                leftSlide.setPower(0);
-                rightSlide.setPower(0);
-                return false;
-            } else {
-                return true;
-            }
+
+                if(rightSlide.getCurrentPosition() >= 2000 - 25 || rightSlide.getCurrentPosition() <= 2000 + 25) {
+                    rightSlide.setPower(0);
+                    leftSlide.setPower(0);
+                }
+
+                return (rightSlide.getCurrentPosition() >= 2000 - 25 || rightSlide.getCurrentPosition() <= 2000 + 25);
         }
     }
 
@@ -92,6 +101,8 @@ public class linearSlideRR {
     }
 
     public Action runToPosition(double position, double power) {
+        runPower = power;
+        runPosition = position;
         return new RunToPosition();
     }
 }
