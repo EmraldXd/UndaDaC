@@ -34,10 +34,10 @@ public class linearSlideRR {
                 initialized = true;
             }
 
-            if(angleMotor.getCurrentPosition() >= 4000) {
+            if(angleMotor.getCurrentPosition() >= 3800) {
                 angleMotor.setPower(0);
             }
-            return angleMotor.getCurrentPosition() <= 4000;
+            return angleMotor.getCurrentPosition() <= 3800;
         }
     }
 
@@ -59,35 +59,88 @@ public class linearSlideRR {
         }
     }
 
-    public class RunToPosition implements Action{
-        private boolean initialized = false;
-        private double pos;
-        private double pow;
+    public class RunToHighRung implements Action{
+
+        public boolean notInit = true;
 
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if(!initialized) {
-                this.pos = runPosition;
-                this.pow = runPower;
+            if(notInit) {
                 rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                if (rightSlide.getCurrentPosition() < pos) {
-                    rightSlide.setPower(pow);
-                    leftSlide.setPower(pow);
-                } else if (rightSlide.getCurrentPosition() > pos) {
-                    rightSlide.setPower(-pow);
-                    leftSlide.setPower(-pow);
-                } else {
-                    return true;
-                }
-                initialized = !initialized;
+                rightSlide.setPower(1);
+                leftSlide.setPower(1);
+                notInit = !notInit;
             }
 
-                if(rightSlide.getCurrentPosition() >= 2000 - 25 || rightSlide.getCurrentPosition() <= 2000 + 25) {
-                    rightSlide.setPower(0);
-                    leftSlide.setPower(0);
-                }
+            if(rightSlide.getCurrentPosition() >= 2695) {
+                rightSlide.setPower(0);
+                leftSlide.setPower(0);
+            }
 
-                return (rightSlide.getCurrentPosition() >= 2000 - 25 || rightSlide.getCurrentPosition() <= 2000 + 25);
+            return rightSlide.getCurrentPosition() <= 2695;
+        }
+    }
+
+    public class RunToHighBasket implements Action {
+        public boolean notInit = true;
+
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if(notInit) {
+                rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                rightSlide.setPower(1);
+                leftSlide.setPower(1);
+                notInit = !notInit;
+            }
+
+            if(rightSlide.getCurrentPosition() >= 4300) {
+                rightSlide.setPower(0);
+                leftSlide.setPower(0);
+            }
+
+            return rightSlide.getCurrentPosition() <= 4300;
+        }
+    }
+
+    public class collectSample implements Action {
+        public boolean notInit = true;
+
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if(notInit) {
+                rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                rightSlide.setPower(1);
+                leftSlide.setPower(1);
+                notInit = !notInit;
+            }
+
+            if(rightSlide.getCurrentPosition() >= 2000) {
+                rightSlide.setPower(0);
+                leftSlide.setPower(0);
+            }
+
+            return rightSlide.getCurrentPosition() <= 2000;
+        }
+    }
+
+    public class runToZero implements Action {
+        public boolean notInit = true;
+
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if(notInit) {
+                rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                rightSlide.setPower(-1);
+                leftSlide.setPower(-1);
+                notInit = !notInit;
+            }
+
+            if(rightSlide.getCurrentPosition() <= 100) {
+                rightSlide.setPower(0);
+                leftSlide.setPower(0);
+            }
+
+            return rightSlide.getCurrentPosition() >= 100;
         }
     }
 
@@ -100,9 +153,19 @@ public class linearSlideRR {
         return new AngleSlidesDown();
     }
 
-    public Action runToPosition(double position, double power) {
-        runPower = power;
-        runPosition = position;
-        return new RunToPosition();
+    public Action runToHighRung() {
+        return new RunToHighRung();
+    }
+
+    public Action runToHighBasket(){
+        return new RunToHighBasket();
+    }
+
+    public Action collectPos() {
+        return new collectSample();
+    }
+
+    public Action home() {
+        return new runToZero();
     }
 }

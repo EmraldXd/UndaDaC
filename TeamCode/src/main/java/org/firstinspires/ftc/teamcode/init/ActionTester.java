@@ -33,10 +33,9 @@ public class ActionTester extends LinearOpMode {
 
         Actions.runBlocking(
             new SequentialAction(
-                claw.initializer(),
-                linearSlide.angleSlidesUp(),
-                claw.moveClaw(),
-                linearSlide.angleSlidesDown()
+                    claw.initializer(),
+                    linearSlide.collectPos(),
+                    linearSlide.home()
             )
         );
     }
