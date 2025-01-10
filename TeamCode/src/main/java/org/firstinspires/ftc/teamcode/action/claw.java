@@ -54,7 +54,7 @@ public class claw {
 
     public void moveClaw(boolean a) {
         if (a && jointDelay.time() > DELAY) {
-            clawJoint.setPosition(up ? .175 : 0 );
+            clawJoint.setPosition(up ? .5 : 0 );
             up = !up;
             jointDelay.reset();
         }

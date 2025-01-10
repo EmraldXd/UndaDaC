@@ -33,18 +33,18 @@ public class clawRR {
     }
 
     public class grab implements Action {
-
-        private boolean finished = true;
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if(claw.getPosition() == 0.2) {
-                claw.setPosition(0);
-                finished = !finished;
-            } else {
-                claw.setPosition(0.2);
-                finished = !finished;
-            }
-            return finished;
+            claw.setPosition(0);
+            return false;
+        }
+    }
+
+    public class prep implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            claw.setPosition(0.2);
+            return false;
         }
     }
 
@@ -54,7 +54,7 @@ public class clawRR {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             if(joint.getPosition() == 0) {
-                joint.setPosition(.175);
+                joint.setPosition(.5);
                 finished = !finished;
             } else {
                 joint.setPosition(0);
@@ -72,7 +72,9 @@ public class clawRR {
         return new moveArm();
     }
 
-    public Action moveClaw() {
+    public Action close() {
         return new grab();
     }
+
+    public Action open() {return new prep();}
 }

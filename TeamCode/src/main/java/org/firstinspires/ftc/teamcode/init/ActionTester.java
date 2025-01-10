@@ -29,14 +29,14 @@ public class ActionTester extends LinearOpMode {
         //intakeRR intake = new intakeRR(hardwareMap);
         clawRR claw = new clawRR(hardwareMap);
 
+        Actions.runBlocking(claw.initializer());
+
         waitForStart();
 
-        Actions.runBlocking(
-            new SequentialAction(
-                    claw.initializer(),
-                    linearSlide.collectPos(),
-                    linearSlide.home()
-            )
-        );
+        Actions.runBlocking(claw.open());
+
+        sleep(5000);
+
+        Actions.runBlocking(claw.close());
     }
 }

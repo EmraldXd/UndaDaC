@@ -2,10 +2,13 @@ package org.firstinspires.ftc.teamcode.customAction;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 public class linearSlideRR {
     DcMotor rightSlide;
@@ -28,16 +31,18 @@ public class linearSlideRR {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+
+            if(angleMotor.getCurrentPosition() >= 3800) {
+                angleMotor.setPower(0);
+                return false;
+            }
             if(!initialized) {
                 angleMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);;
                 angleMotor.setPower(1);
                 initialized = true;
             }
 
-            if(angleMotor.getCurrentPosition() >= 3800) {
-                angleMotor.setPower(0);
-            }
-            return angleMotor.getCurrentPosition() <= 3800;
+            return true;
         }
     }
 
@@ -64,27 +69,14 @@ public class linearSlideRR {
         public boolean notInit = true;
 
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if(notInit) {
-                rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                rightSlide.setPower(1);
-                leftSlide.setPower(1);
-                notInit = !notInit;
-            }
+            telemetryPacket.put("a_rightPos", rightSlide.getCurrentPosition());
 
             if(rightSlide.getCurrentPosition() >= 2695) {
                 rightSlide.setPower(0);
                 leftSlide.setPower(0);
+                return false;
             }
 
-            return rightSlide.getCurrentPosition() <= 2695;
-        }
-    }
-
-    public class RunToHighBasket implements Action {
-        public boolean notInit = true;
-
-        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             if(notInit) {
                 rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -93,12 +85,32 @@ public class linearSlideRR {
                 notInit = !notInit;
             }
 
+            return true;
+            //return rightSlide.getCurrentPosition() <= 2695;
+        }
+    }
+
+    public class RunToHighBasket implements Action {
+
+        public boolean notInit = true;
+
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+
             if(rightSlide.getCurrentPosition() >= 4300) {
                 rightSlide.setPower(0);
                 leftSlide.setPower(0);
+                return false;
             }
 
-            return rightSlide.getCurrentPosition() <= 4300;
+            if(notInit) {
+                rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                rightSlide.setPower(1);
+                leftSlide.setPower(1);
+                notInit = !notInit;
+            }
+
+            return true;
         }
     }
 
@@ -106,6 +118,14 @@ public class linearSlideRR {
         public boolean notInit = true;
 
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+
+            if(rightSlide.getCurrentPosition() >= 2000) {
+                rightSlide.setPower(0);
+                leftSlide.setPower(0);
+                return false;
+            }
+
+
             if(notInit) {
                 rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -114,12 +134,7 @@ public class linearSlideRR {
                 notInit = !notInit;
             }
 
-            if(rightSlide.getCurrentPosition() >= 2000) {
-                rightSlide.setPower(0);
-                leftSlide.setPower(0);
-            }
-
-            return rightSlide.getCurrentPosition() <= 2000;
+            return true;
         }
     }
 

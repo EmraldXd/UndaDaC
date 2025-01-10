@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.init;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -21,12 +23,14 @@ public class SpecimenAuto extends LinearOpMode{
     Action start;
     Action align;
     Action pickupNew;
+
     @Override
     public void runOpMode() throws InterruptedException {
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(11.94, -62.36, Math.toRadians(-90.00)));
         clawRR claw = new clawRR(hardwareMap);
         linearSlideRR linearSlides = new linearSlideRR(hardwareMap);
         Actions.runBlocking(claw.initializer());
+
 
         //This runs us to the rungs to hang our preload specimen
         start = drive.actionBuilder(new Pose2d(11.94, -62.36, Math.toRadians(-90.00)))
@@ -37,7 +41,7 @@ public class SpecimenAuto extends LinearOpMode{
         //This used in order to align our robot to hang the specimens
         align = drive.actionBuilder(new Pose2d(0.00, -42.00, Math.toRadians(-90.00)))
                 .lineToYConstantHeading(-38)
-                .waitSeconds(1)
+                .waitSeconds(0.5)
                 .build();
 
         pickupNew = drive.actionBuilder(new Pose2d(0.00, -38.00, Math.toRadians(-90.00)))
