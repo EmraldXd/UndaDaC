@@ -161,6 +161,26 @@ public class linearSlides {
     }
 
     /**
+     * This is being used in order to send back to the claw that the linear slides have either raised
+     * or lowered to the right position to move the claw out of the way of objects, reducing the chance
+     * of damaging the field.
+     */
+
+    public String moveUpOrDown() {
+        if(ticksToRadians(angleMotor.getCurrentPosition()) >=  Math.toRadians(40) && ticksToRadians(angleMotor.getCurrentPosition()) <= Math.toRadians(50)) {
+            if(angleMotor.getPower() > 0) {
+                return "Lower";
+            } else if(angleMotor.getPower() < 0) {
+                return "Raise";
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * This was used to find if the angle motor was following when using bevel gears before we swapped
      * to a worm gear. This would prevent us from getting penalized by giving the linear slides a
      * chance to autonomously retract.

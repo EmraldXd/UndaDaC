@@ -10,7 +10,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.action.mecanumDrive;
+
+import java.util.List;
 
 @TeleOp(name = "limelightTest", group = "Main")
 public class LimelightTest extends OpMode{
@@ -21,48 +24,40 @@ public class LimelightTest extends OpMode{
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
         limelight.start(); // This tells Limelight to start looking!
+        limelight.pipelineSwitch(9);
 
         mecanumDrive.init(this);
     }
 
     @Override
     public void loop() {
-        if(gamepad1.b) {
-            limelight.pipelineSwitch(0);
-            current = "Red";
-        } else if (gamepad1.y) {
-            limelight.pipelineSwitch(1);
-            current = "Yellow";
-        } else if (gamepad1.x) {
-            limelight.pipelineSwitch(3);
-            current = "Blue";
-        }
-
         LLResult result = limelight.getLatestResult();
-        if (result != null && result.isValid()) {
-            double tx = result.getTx(); // How far left or right the target is (degrees)
-            double ty = result.getTy(); // How far up or down the target is (degrees)
-            double ta = result.getTa(); // How big the target looks (0%-100% of the image)
+        if (result != null) {
+            // Access general information
+            Pose3D botpose = result.getBotpose();
+            double captureLatency = result.getCaptureLatency();
+            double targetingLatency = result.getTargetingLatency();
+            double parseLatency = result.getParseLatency();
+            telemetry.addData("LL Latency", captureLatency + targetingLatency);
+            telemetry.addData("Parse Latency", parseLatency);
+            telemetry.addData("PythonOutput", java.util.Arrays.toString(result.getPythonOutput()));
 
-            if(tx > 4) {
-                mecanumDrive.setPower(0, 0, .5);
-            } else if (tx < -4) {
-                mecanumDrive.setPower(0, 0, -.5);
-            } else {
-                mecanumDrive.setPower(0, 0, 0);
+            if (result.isValid()) {
+                telemetry.addData("tx", result.getTx());
+                telemetry.addData("txnc", result.getTxNC());
+                telemetry.addData("ty", result.getTy());
+                telemetry.addData("tync", result.getTyNC());
+
+                telemetry.addData("Botpose", botpose.toString());
+
+                // Access fiducial results
+                List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
+                for (LLResultTypes.FiducialResult fr : fiducialResults) {
+                    telemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f", fr.getFiducialId(), fr.getFamily(),fr.getTargetXDegrees(), fr.getTargetYDegrees());
+                }
             }
-
-            if(ta < 2.5) {
-                mecanumDrive.setPower(0, 0, 0);
-            } else {
-                mecanumDrive.setPower(0, 0, 0);
-            }
-
-            telemetry.addData("Target X", tx);
-            telemetry.addData("Target Y", ty);
-            telemetry.addData("Target Area", ta);
         } else {
-            telemetry.addData("Limelight", "No Targets");
+            telemetry.addData("Limelight", "No data available");
         }
     }
 }

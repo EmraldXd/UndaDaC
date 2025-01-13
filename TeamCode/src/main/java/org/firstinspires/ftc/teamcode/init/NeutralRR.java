@@ -35,53 +35,30 @@ public class NeutralRR extends LinearOpMode{
     Action firstRunToBasket;
     Action secondRunToBasket;
     Action lastRunToBasket;
+    MecanumDrive finalDrive;
+
+    Pose2d placeholder;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(11.94, 62.36, Math.toRadians(90.00)));
+        MecanumDrive startDrive = new MecanumDrive(hardwareMap, new Pose2d(11.94, 62.36, Math.toRadians(90.00)));
         clawRR claw = new clawRR(hardwareMap);
         linearSlideRR linearSlides = new linearSlideRR(hardwareMap);
         Actions.runBlocking(claw.initializer());
 
         //This runs us to the rungs to hang our preload specimen
-        start = drive.actionBuilder(new Pose2d(11.94, 62.36, Math.toRadians(90.00)))
+        start = startDrive.actionBuilder(new Pose2d(11.94, 62.36, Math.toRadians(90.00)))
                 .setReversed(true)
                 .splineToConstantHeading(new Vector2d(0.00, 42.00), Math.toRadians(-90.00))
                 .build();
 
         //This used in order to align our robot to hang the specimens
-        align = drive.actionBuilder(new Pose2d(0.00, 42.00, Math.toRadians(90.00)))
+        align = startDrive.actionBuilder(new Pose2d(0.00, 42.00, Math.toRadians(90.00)))
                 .lineToYConstantHeading(40)
                 .waitSeconds(0.5)
                 .build();
 
-        pickupFirst = drive.actionBuilder(new Pose2d(0.00, 40.00, Math.toRadians(90.00)))
-                .splineTo(new Vector2d(47.5, 45), Math.toRadians(-90.00))
-                .waitSeconds(0.5)
-                .build();
 
-        firstRunToBasket = drive.actionBuilder((new Pose2d(47.5, 41, Math.toRadians(90))))
-                .setReversed(true)
-                .splineTo(new Vector2d(48, 52), Math.toRadians(45))
-                .build();
-
-        pickupSecond = drive.actionBuilder(new Pose2d(48, 52, Math.toRadians(-135)))
-                .splineTo(new Vector2d(59, 35), Math.toRadians(-90))
-                .build();
-
-        secondRunToBasket = drive.actionBuilder(new Pose2d(-59, -35, Math.toRadians(90)))
-                .setReversed(true)
-                .splineTo(new Vector2d(48, 52), Math.toRadians(45))
-                .build();
-
-        pickupThird = drive.actionBuilder(new Pose2d(-55, -55, Math.toRadians(-135)))
-                .splineTo(new Vector2d(55, 33), Math.toRadians(-30))
-                .build();
-
-        lastRunToBasket = drive.actionBuilder(new Pose2d(-55, -33, Math.toRadians(30)))
-                .setReversed(true)
-                .splineTo(new Vector2d(48, 52), Math.toRadians(45))
-                .build();
 
         waitForStart();
 
@@ -96,7 +73,44 @@ public class NeutralRR extends LinearOpMode{
                                 )
                         ),
                         align,
-                        linearSlides.home(),
+                        linearSlides.home()
+                )
+        );
+
+
+        //We now build the rest of the pathing now the robot knows were it is
+        finalDrive = new MecanumDrive(hardwareMap, placeholder);
+
+        pickupFirst = finalDrive.actionBuilder(new Pose2d(0.00, 40.00, Math.toRadians(90.00)))
+                .splineTo(new Vector2d(47.5, 45), Math.toRadians(-90.00))
+                .waitSeconds(0.5)
+                .build();
+
+        firstRunToBasket = finalDrive.actionBuilder((new Pose2d(47.5, 41, Math.toRadians(90))))
+                .setReversed(true)
+                .splineTo(new Vector2d(48, 52), Math.toRadians(45))
+                .build();
+
+        pickupSecond = finalDrive.actionBuilder(new Pose2d(48, 52, Math.toRadians(-135)))
+                .splineTo(new Vector2d(59, 35), Math.toRadians(-90))
+                .build();
+
+        secondRunToBasket = finalDrive.actionBuilder(new Pose2d(-59, -35, Math.toRadians(90)))
+                .setReversed(true)
+                .splineTo(new Vector2d(48, 52), Math.toRadians(45))
+                .build();
+
+        pickupThird = finalDrive.actionBuilder(new Pose2d(-55, -55, Math.toRadians(-135)))
+                .splineTo(new Vector2d(55, 33), Math.toRadians(-30))
+                .build();
+
+        lastRunToBasket = finalDrive.actionBuilder(new Pose2d(-55, -33, Math.toRadians(30)))
+                .setReversed(true)
+                .splineTo(new Vector2d(48, 52), Math.toRadians(45))
+                .build();
+
+        Actions.runBlocking(
+                new SequentialAction(
                         new ParallelAction(
                                 pickupFirst,
                                 linearSlides.angleSlidesDown(),

@@ -44,7 +44,7 @@ public class teleOp extends OpMode {
         linearSlides.telemetryOutput();
         //Controls for claw();
         claw.moveClaw(gamepad2.a);
-        claw.useClaw(gamepad2.right_bumper);
+        claw.useClaw(gamepad2.right_bumper, linearSlides.liftTime());
         claw.rotateClaw(gamepad2.dpad_left, gamepad2.dpad_right);
         claw.showTelemetry();
         claw.lift(linearSlides.liftTime());
