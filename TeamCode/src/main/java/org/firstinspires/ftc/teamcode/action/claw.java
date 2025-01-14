@@ -60,17 +60,15 @@ public class claw {
         }
     }
 
-    public void useClaw(boolean isPressed, boolean liftTime) {
-        if(!liftTime) {
-            if (isPressed && delayClaw.time() > DELAY && !isClosed) {
-                claw.setPosition(0.0);
-                isClosed = true;
-                delayClaw.reset();
-            } else if (isPressed && delayClaw.time() > DELAY && isClosed) {
-                claw.setPosition(0.2);
-                isClosed = false;
-                delayClaw.reset();
-            }
+    public void useClaw(boolean isPressed) {
+        if (isPressed && delayClaw.time() > DELAY && !isClosed) {
+            claw.setPosition(0.0);
+            isClosed = true;
+            delayClaw.reset();
+        } else if (isPressed && delayClaw.time() > DELAY && isClosed) {
+            claw.setPosition(0.35);
+            isClosed = false;
+            delayClaw.reset();
         }
     }
 
@@ -89,14 +87,6 @@ public class claw {
     public void lift(boolean lift) {
         if(!up && lift) {
             moveClaw(true);
-        }
-    }
-
-    public void moveArm(String move) {
-        if(move.equals("Raise")) {
-            clawJoint.setPosition(0);
-        } else if(move.equals("Lower")) {
-            clawJoint.setPosition(0.5);
         }
     }
 

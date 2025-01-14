@@ -43,7 +43,7 @@ public class clawRR {
     public class prep implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            claw.setPosition(0.2);
+            claw.setPosition(0.35);
             return false;
         }
     }
