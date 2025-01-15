@@ -159,6 +159,26 @@ public class linearSlideRR {
         }
     }
 
+    public class takeSpecimen implements Action {
+        public boolean notInit = true;
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+
+            if(rightSlide.getCurrentPosition() >= 200) {
+                rightSlide.setPower(0);
+                leftSlide.setPower(0);
+                return false;
+            }
+            if(notInit) {
+                rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                rightSlide.setPower(1);
+                leftSlide.setPower(1);
+                notInit = !notInit;
+            }
+            return true;
+        }
+    }
+
     //The callable actions
     public Action angleSlidesUp() {
         return new AngleSlidesUp();
@@ -182,5 +202,9 @@ public class linearSlideRR {
 
     public Action home() {
         return new runToZero();
+    }
+
+    public Action take() {
+        return new takeSpecimen();
     }
 }

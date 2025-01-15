@@ -22,32 +22,48 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 public class SpecimenAuto extends LinearOpMode{
     Action start;
     Action align;
+    Action alignNext;
     Action pickupNew;
+    Action hangNext;
+    Action moveFromWall;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(11.94, -62.36, Math.toRadians(-90.00)));
+        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(-11.94, 62.36, Math.toRadians(90.00)));
         clawRR claw = new clawRR(hardwareMap);
         linearSlideRR linearSlides = new linearSlideRR(hardwareMap);
         Actions.runBlocking(claw.initializer());
 
 
         //This runs us to the rungs to hang our preload specimen
-        start = drive.actionBuilder(new Pose2d(11.94, -62.36, Math.toRadians(-90.00)))
+        start = drive.actionBuilder(new Pose2d(-11.94, 62.36, Math.toRadians(90.00)))
                 .setReversed(true)
-                .splineTo(new Vector2d(0.00, -42.00), Math.toRadians(90.00))
+                .splineTo(new Vector2d(0.00, 42.00), Math.toRadians(-90.00))
                 .build();
 
         //This used in order to align our robot to hang the specimens
-        align = drive.actionBuilder(new Pose2d(0.00, -42.00, Math.toRadians(-90.00)))
-                .lineToYConstantHeading(-38)
+        align = drive.actionBuilder(new Pose2d(0.00, 42.00, Math.toRadians(90.00)))
+                .lineToYConstantHeading(40)
                 .waitSeconds(0.5)
                 .build();
 
-        pickupNew = drive.actionBuilder(new Pose2d(0.00, -38.00, Math.toRadians(-90.00)))
-                .splineTo(new Vector2d(35.96, -35.81), Math.toRadians(90.00))
+        pickupNew = drive.actionBuilder(new Pose2d(0.00, 40.00, Math.toRadians(90.00)))
+                .splineTo(new Vector2d(-40, 42), Math.toRadians(-90))
+                .lineToYConstantHeading(61)
+                .build();
+
+        hangNext = drive.actionBuilder(new Pose2d(-38, 50, -90))
                 .setReversed(true)
-                .splineTo(new Vector2d(48.12, -60), Math.toRadians(-90))
+                .splineTo(new Vector2d(2, 42), Math.toRadians(-90))
+                .build();
+
+        alignNext = drive.actionBuilder(new Pose2d(2.00, 42.00, Math.toRadians(90.00)))
+                .lineToYConstantHeading(40.5)
+                .waitSeconds(0.5)
+                .build();
+
+        moveFromWall = drive.actionBuilder(new Pose2d(-40, 60, Math.toRadians(-90)))
+                .lineToYConstantHeading(50)
                 .build();
 
 
@@ -63,9 +79,16 @@ public class SpecimenAuto extends LinearOpMode{
                                 linearSlides.runToHighRung()
                         )
                     ),
-                    align,
-                    linearSlides.home(),
-                    pickupNew
+                        align,
+                        linearSlides.home(),
+                        pickupNew,
+                        linearSlides.take(),
+                        moveFromWall,
+                        hangNext,
+                        linearSlides.runToHighRung(),
+                        alignNext,
+                        linearSlides.home()
+
                 )
             );
     }
