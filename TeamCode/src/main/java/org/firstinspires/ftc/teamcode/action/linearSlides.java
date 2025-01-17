@@ -55,9 +55,6 @@ public class linearSlides {
         rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         angleMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        angleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //Set angle motor offset
@@ -175,10 +172,10 @@ public class linearSlides {
             } else if(angleMotor.getPower() < 0) {
                 return "Raise";
             } else {
-                return null;
+                return "Nuhuh";
             }
         } else {
-            return null;
+            return "nope";
         }
     }
 

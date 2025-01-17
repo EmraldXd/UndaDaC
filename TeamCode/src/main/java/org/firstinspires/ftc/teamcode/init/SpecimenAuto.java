@@ -26,6 +26,9 @@ public class SpecimenAuto extends LinearOpMode{
     Action pickupNew;
     Action hangNext;
     Action moveFromWall;
+    Action pickupSecond;
+    Action hangSecond;
+    Action alignSecond;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -54,16 +57,31 @@ public class SpecimenAuto extends LinearOpMode{
 
         hangNext = drive.actionBuilder(new Pose2d(-38, 50, -90))
                 .setReversed(true)
-                .splineTo(new Vector2d(2, 42), Math.toRadians(-90))
+                .splineTo(new Vector2d(2, 44), Math.toRadians(-90))
                 .build();
 
-        alignNext = drive.actionBuilder(new Pose2d(2.00, 42.00, Math.toRadians(90.00)))
+        alignNext = drive.actionBuilder(new Pose2d(2.00, 44.00, Math.toRadians(90.00)))
                 .lineToYConstantHeading(40.5)
                 .waitSeconds(0.5)
                 .build();
 
         moveFromWall = drive.actionBuilder(new Pose2d(-40, 60, Math.toRadians(-90)))
                 .lineToYConstantHeading(50)
+                .build();
+
+        pickupSecond = drive.actionBuilder(new Pose2d(2.00, 40.50, Math.toRadians(90.00)))
+                .splineTo(new Vector2d(-40, 42), Math.toRadians(-90))
+                .lineToYConstantHeading(63)
+                .build();
+
+        hangSecond = drive.actionBuilder(new Pose2d(-40, 63, -90))
+                .setReversed(true)
+                .splineTo(new Vector2d(4, 44), Math.toRadians(-90))
+                .build();
+
+        alignSecond = drive.actionBuilder(new Pose2d(2.00, 44.00, Math.toRadians(90.00)))
+                .lineToYConstantHeading(40.5)
+                .waitSeconds(0.5)
                 .build();
 
 
@@ -87,8 +105,8 @@ public class SpecimenAuto extends LinearOpMode{
                         hangNext,
                         linearSlides.runToHighRung(),
                         alignNext,
-                        linearSlides.home()
-
+                        linearSlides.home(),
+                        pickupSecond
                 )
             );
     }

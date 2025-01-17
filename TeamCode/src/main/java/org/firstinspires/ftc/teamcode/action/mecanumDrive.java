@@ -2,12 +2,17 @@ package org.firstinspires.ftc.teamcode.action;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.roadrunner.ftc.LazyImu;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.I2cDevice;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import java.text.DecimalFormat;
 
@@ -20,10 +25,14 @@ public class mecanumDrive {
     DcMotor fL;
     DcMotor bR;
     DcMotor bL;
+    IMU imu;
     double fRPwr;
     double fLPwr;
     double bRPwr;
     double bLPwr;
+    double heading;
+    double adjustedX;
+    double adjustedY;
     Telemetry telemetry;
     // DECLARE CUSTOM
     static double totalSpeed = 0.75; //This is to control the percent of energy being applied to the motors.
@@ -40,6 +49,8 @@ public class mecanumDrive {
         fL = hardwareMap.get(DcMotor.class, "Front Left");
         bR = hardwareMap.get(DcMotor.class, "Back Right");
         bL = hardwareMap.get(DcMotor.class, "Back Left");
+        imu = hardwareMap.get(IMU.class, "imu");
+
 
         fL.setDirection(DcMotorSimple.Direction.REVERSE);
         bL.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -48,6 +59,8 @@ public class mecanumDrive {
         fL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         bR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         bL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        imu.resetYaw();
     }
 
     /** Enable or disable slow mode for the wheels.
@@ -109,6 +122,36 @@ public class mecanumDrive {
         bL.setPower(bLPwr * totalSpeed * slowSpeed);
     }
 
+    public void driversideDrive(double x, double y, double rot, boolean reset) {
+        x = x * 1.1;
+
+        if (reset) {
+            imu.resetYaw();
+        }
+
+        heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+        // Rotate the movement direction counter to the bot's rotation
+        double rotX = x * Math.cos(heading) - y * Math.sin(heading);
+        double rotY = x * Math.sin(heading) + y * Math.cos(heading);
+
+        rotX = rotX * 1.1;  // Counteract imperfect strafing
+
+        // Denominator is the largest motor power (absolute value) or 1
+        // This ensures all the powers maintain the same ratio,
+        // but only if at least one is out of the range [-1, 1]
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rot), 1);
+        fLPwr = ((-rotY + rotX + rot) / denominator) * slowSpeed;
+        bLPwr = ((-rotY - rotX + rot) / denominator) * slowSpeed;
+        fRPwr = ((-rotY - rotX - rot) / denominator) * slowSpeed;
+        bRPwr = ((-rotY + rotX - rot) / denominator) * slowSpeed;
+
+        fL.setPower(fLPwr);
+        bL.setPower(bLPwr);
+        fR.setPower(fRPwr);
+        bR.setPower(bRPwr);
+    }
+
     public void telemetryOutput() {
         // Power output
         telemetry.addData("fRMotorPwr", df.format(fRPwr));
@@ -120,5 +163,8 @@ public class mecanumDrive {
         telemetry.addData("Front Right Ticks", fR.getCurrentPosition());
         telemetry.addData("Back Left Ticks", bL.getCurrentPosition());
         telemetry.addData("Back Right Ticks", bR.getCurrentPosition());
+        //Imu heading
+        telemetry.addData("IMU heading: ", imu.getRobotYawPitchRollAngles());
+        telemetry.addData("IMU heading 2: ", imu.getRobotAngularVelocity(AngleUnit.DEGREES));
     }
 }

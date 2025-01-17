@@ -47,12 +47,12 @@ public class NeutralRR extends LinearOpMode{
         //This runs us to the rungs to hang our preload specimen
         start = drive.actionBuilder(new Pose2d(11.94, 62.36, Math.toRadians(90.00)))
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(0.00, 42.00), Math.toRadians(-90.00))
+                .splineToConstantHeading(new Vector2d(0.00, 43.00), Math.toRadians(-90.00))
                 .build();
 
         //This used in order to align our robot to hang the specimens
-        align = drive.actionBuilder(new Pose2d(0.00, 42.00, Math.toRadians(90.00)))
-                .lineToYConstantHeading(40)
+        align = drive.actionBuilder(new Pose2d(0.00, 43.00, Math.toRadians(90.00)))
+                .lineToYConstantHeading(41)
                 .waitSeconds(0.5)
                 .build();
 
@@ -67,7 +67,7 @@ public class NeutralRR extends LinearOpMode{
                 .build();
 
         pickupSecond = drive.actionBuilder(new Pose2d(48, 52, Math.toRadians(-135)))
-                .splineTo(new Vector2d(58, 41), Math.toRadians(-90))
+                .splineTo(new Vector2d(58, 43), Math.toRadians(-90))
                 .build();
 
         secondRunToBasket = drive.actionBuilder(new Pose2d(56, 41, Math.toRadians(-90)))
@@ -121,7 +121,7 @@ public class NeutralRR extends LinearOpMode{
 
         Actions.runBlocking(claw.close());
 
-        sleep(400);
+        sleep(300);
 
         Actions.runBlocking(
                 new SequentialAction(
@@ -141,7 +141,7 @@ public class NeutralRR extends LinearOpMode{
                 )
         );
 
-        sleep(200);
+        sleep(300);
 
         Actions.runBlocking(claw.open());
 
@@ -201,14 +201,11 @@ public class NeutralRR extends LinearOpMode{
 
         Actions.runBlocking(claw.angle());
 
-        sleep(200);
+        sleep(300);
 
         Actions.runBlocking(
                 new SequentialAction(
-                        new ParallelAction (
-                                linearSlides.home(),
-                                clear
-                        ),
+                        linearSlides.home(),
                         claw.angle(),
                         linearSlides.angleSlidesDown()
                 )

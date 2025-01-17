@@ -52,25 +52,25 @@ public class claw {
         anglerDelay.reset();
     }
 
-    public void moveClaw(boolean a) {
+    public void moveClaw(boolean a, boolean liftTime) {
+        if(!liftTime) {
         if (a && jointDelay.time() > DELAY) {
-            clawJoint.setPosition(up ? .5 : 0 );
+            clawJoint.setPosition(up ? .085 : 0);
             up = !up;
             jointDelay.reset();
         }
+        }
     }
 
-    public void useClaw(boolean isPressed, boolean liftTime) {
-        if(liftTime) {
-            if (isPressed && delayClaw.time() > DELAY && !isClosed) {
-                claw.setPosition(0.0);
-                isClosed = true;
-                delayClaw.reset();
-            } else if (isPressed && delayClaw.time() > DELAY && isClosed) {
-                claw.setPosition(0.2);
-                isClosed = false;
-                delayClaw.reset();
-            }
+    public void useClaw(boolean isPressed) {
+        if (isPressed && delayClaw.time() > DELAY && !isClosed) {
+            claw.setPosition(0.0);
+            isClosed = true;
+            delayClaw.reset();
+        } else if (isPressed && delayClaw.time() > DELAY && isClosed) {
+            claw.setPosition(0.2);
+            isClosed = false;
+            delayClaw.reset();
         }
     }
 
@@ -88,15 +88,17 @@ public class claw {
 
     public void lift(boolean lift) {
         if(!up && lift) {
-            moveClaw(true);
+            moveClaw(true, true);
         }
     }
 
-    public void moveArm(String move) {
-        if(move.equals("Raise")) {
-            clawJoint.setPosition(0);
-        } else if(move.equals("Lower")) {
-            clawJoint.setPosition(0.5);
+    public void moveArm(String move, boolean override) {
+        if(!override) {
+            if(move.equals("Raise")) {
+                clawJoint.setPosition(0);
+            } else if(move.equals("Lower")) {
+                clawJoint.setPosition(0.1);
+            }
         }
     }
 
