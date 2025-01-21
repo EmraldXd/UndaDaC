@@ -1,30 +1,20 @@
 package org.firstinspires.ftc.teamcode.init;
 
-import androidx.annotation.NonNull;
-
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-//Import our used RoadRunnerActions
-import org.firstinspires.ftc.teamcode.customAction.linearSlideRR;
-import org.firstinspires.ftc.teamcode.customAction.clawRR;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-
-import java.io.SequenceInputStream;
-import java.util.concurrent.TimeUnit;
+import org.firstinspires.ftc.teamcode.customAction.clawRR;
+import org.firstinspires.ftc.teamcode.customAction.linearSlideRR;
 
 @Autonomous
-public class NeutralRR extends LinearOpMode{
+public class noAlgorithmsStop extends LinearOpMode{
 
     //These are the actions the robot takes individually
     Action start;
@@ -89,6 +79,8 @@ public class NeutralRR extends LinearOpMode{
                 .build();
 
         waitForStart();
+
+        sleep(3000);
 
         Actions.runBlocking(
                 new SequentialAction(

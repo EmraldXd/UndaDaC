@@ -59,8 +59,6 @@ public class mecanumDrive {
         fL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         bR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         bL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        imu.resetYaw();
     }
 
     /** Enable or disable slow mode for the wheels.
@@ -125,11 +123,7 @@ public class mecanumDrive {
     public void driversideDrive(double x, double y, double rot, boolean reset) {
         x = x * 1.1;
 
-        if (reset) {
-            imu.resetYaw();
-        }
-
-        heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) - Math.PI;
 
         // Rotate the movement direction counter to the bot's rotation
         double rotX = x * Math.cos(heading) - y * Math.sin(heading);

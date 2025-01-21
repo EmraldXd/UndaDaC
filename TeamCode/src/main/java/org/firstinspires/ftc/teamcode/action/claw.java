@@ -68,7 +68,7 @@ public class claw {
             isClosed = true;
             delayClaw.reset();
         } else if (isPressed && delayClaw.time() > DELAY && isClosed) {
-            claw.setPosition(0.2);
+            claw.setPosition(0.25);
             isClosed = false;
             delayClaw.reset();
         }
@@ -95,9 +95,11 @@ public class claw {
     public void moveArm(String move, boolean override) {
         if(!override) {
             if(move.equals("Raise")) {
-                clawJoint.setPosition(0);
+                clawJoint.setPosition(0.085);
+                up = false;
             } else if(move.equals("Lower")) {
-                clawJoint.setPosition(0.1);
+                clawJoint.setPosition(0);
+                up = true;
             }
         }
     }
