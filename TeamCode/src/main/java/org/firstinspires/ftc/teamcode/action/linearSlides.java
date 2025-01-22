@@ -17,7 +17,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@Autonomous
 public class linearSlides {
     double MAX_POWER = .40;
     static final DecimalFormat df = new DecimalFormat("0.00");
