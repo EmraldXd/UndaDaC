@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.action;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,6 +14,8 @@ import java.text.DecimalFormat;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @Autonomous
 public class linearSlides {
@@ -26,6 +29,8 @@ public class linearSlides {
     DigitalChannel touchSensor;
     DigitalChannel slideSensor;
     HardwareMap hardwareMap;
+
+    IMU imu;
     double currentPosition;
     double currentAngle;
     double angleOffset;
@@ -62,6 +67,8 @@ public class linearSlides {
         //Set angle motor offset
         angleOffset = Math.abs(angleMotor.getCurrentPosition());
         slidesOffset = Math.abs(rightSlide.getCurrentPosition());
+        //Initialize IMU for the pitch of the robot
+        imu = hardwareMap.get(IMU.class, "imu");
     }
 
     public void setSlides() {
@@ -90,7 +97,7 @@ public class linearSlides {
 
     public void slidePower(double x) {
         slidesPosition = Math.abs(rightSlide.getCurrentPosition()) - slidesOffset;
-        maxExtend = Math.abs(MAX_FORWARD_DISTANCE / Math.cos(ticksToRadians(angleMotor.getCurrentPosition())));
+        maxExtend = Math.abs(MAX_FORWARD_DISTANCE / (Math.cos(ticksToRadians(angleMotor.getCurrentPosition())) + imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.RADIANS)));
         speedRatio = ((maxExtend - slidesPosition) / 500);
         if(slideSensor.getState()) {
             if (slidesPosition - maxExtend < 0 || x > 0) {
