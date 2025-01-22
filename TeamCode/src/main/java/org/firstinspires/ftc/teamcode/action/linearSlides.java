@@ -97,7 +97,7 @@ public class linearSlides {
 
     public void slidePower(double x) {
         slidesPosition = Math.abs(rightSlide.getCurrentPosition()) - slidesOffset;
-        maxExtend = Math.abs(MAX_FORWARD_DISTANCE / (Math.cos(ticksToRadians(angleMotor.getCurrentPosition())) + Math.abs(imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.RADIANS))));
+        maxExtend = Math.abs(MAX_FORWARD_DISTANCE / (Math.cos(ticksToRadians(angleMotor.getCurrentPosition()) + Math.abs(imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.RADIANS)))));
         speedRatio = ((maxExtend - slidesPosition) / 500);
         if(slideSensor.getState()) {
             if (slidesPosition - maxExtend < 0 || x > 0) {
