@@ -88,7 +88,7 @@ public class linearSlides {
         double y;
         //Set booleans to double values to work the linear slides
         y = (up ? -1 : 0) + (down ? 1 : 0);
-        angleMotor.setPower(y * MAX_POWER);
+        angleMotor.setPower(y);
         if(down || up) {
             angleMotor.setPower(y);
             downLastPressed = !downLastPressed;

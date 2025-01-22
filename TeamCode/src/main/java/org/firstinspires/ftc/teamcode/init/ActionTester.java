@@ -25,13 +25,11 @@ import org.firstinspires.ftc.teamcode.customAction.clawRR;
 
 @Autonomous
 public class ActionTester extends LinearOpMode {
-
-    mecanumDrive mecanumDrive = new mecanumDrive();
-    MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)));
-
     private static final ElapsedTime driveTime = new ElapsedTime();
     @Override
     public void runOpMode() throws InterruptedException {
+        mecanumDrive mecanumDrive = new mecanumDrive();
+        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)));
         mecanumDrive.init(this);
 
         Action forward = drive.actionBuilder(new Pose2d(0, 0, Math.toRadians(0)))
