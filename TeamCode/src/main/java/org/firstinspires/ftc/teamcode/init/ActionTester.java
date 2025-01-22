@@ -15,28 +15,43 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.customAction.linearSlideRR;
+import org.firstinspires.ftc.teamcode.action.mecanumDrive;
 import org.firstinspires.ftc.teamcode.customAction.intakeRR;
 import org.firstinspires.ftc.teamcode.customAction.clawRR;
 
 
 @Autonomous
 public class ActionTester extends LinearOpMode {
+
+    mecanumDrive mecanumDrive = new mecanumDrive();
+    MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)));
+
+    private static final ElapsedTime driveTime = new ElapsedTime();
     @Override
     public void runOpMode() throws InterruptedException {
-        linearSlideRR linearSlide = new linearSlideRR(hardwareMap);
-        //intakeRR intake = new intakeRR(hardwareMap);
-        clawRR claw = new clawRR(hardwareMap);
+        mecanumDrive.init(this);
 
-        Actions.runBlocking(claw.initializer());
+        Action forward = drive.actionBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+                .splineTo(new Vector2d(10, 0), Math.toRadians(0))
+                .build();
+
+        Action forwardAgain = drive.actionBuilder(new Pose2d(10, -10, 0))
+                .splineTo(new Vector2d(20, -10), 0)
+                .build();
 
         waitForStart();
 
-        Actions.runBlocking(claw.open());
+        Actions.runBlocking(forward);
 
-        sleep(5000);
+        driveTime.reset();
 
-        Actions.runBlocking(claw.close());
+        while(driveTime.time() < 1.00) {
+            mecanumDrive.setPower(-.75, 0, 0);
+        }
+
+        Actions.runBlocking(forwardAgain);
     }
 }
