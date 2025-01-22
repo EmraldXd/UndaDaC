@@ -97,15 +97,15 @@ public class linearSlides {
 
     public void slidePower(double x) {
         slidesPosition = Math.abs(rightSlide.getCurrentPosition()) - slidesOffset;
-        maxExtend = Math.abs(MAX_FORWARD_DISTANCE / (Math.cos(ticksToRadians(angleMotor.getCurrentPosition())) + imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.RADIANS)));
+        maxExtend = Math.abs(MAX_FORWARD_DISTANCE / (Math.cos(ticksToRadians(angleMotor.getCurrentPosition())) + Math.abs(imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.RADIANS))));
         speedRatio = ((maxExtend - slidesPosition) / 500);
         if(slideSensor.getState()) {
             if (slidesPosition - maxExtend < 0 || x > 0) {
                 rightSlide.setPower((Math.abs(rightSlide.getCurrentPosition()) < 1250 && x > 0) ? 0.5 * x : x);
                 leftSlide.setPower((Math.abs(rightSlide.getCurrentPosition()) < 1250 && x > 0) ? 0.5 * x : x); //We change the linear slide speed as it approaches the button to avoid physical damage
             } else {
-                rightSlide.setPower(1);
-                leftSlide.setPower(1);
+                rightSlide.setPower(.5);
+                leftSlide.setPower(.5);
             }
         } else if (!slideSensor.getState() && !slideStopped) {
             rightSlide.setPower(0); //Stop the linear slides when they hit the button
