@@ -29,6 +29,7 @@ public class SpecimenAuto extends LinearOpMode{
     Action pickupSecond;
     Action hangSecond;
     Action alignSecond;
+    Action pushSpecimens;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -74,7 +75,7 @@ public class SpecimenAuto extends LinearOpMode{
                 .lineToYConstantHeading(63)
                 .build();
 
-        hangSecond = drive.actionBuilder(new Pose2d(-40, 63, -90))
+        hangSecond = drive.actionBuilder(new Pose2d(-40, 63, Math.toRadians(-90)))
                 .setReversed(true)
                 .splineTo(new Vector2d(4, 44), Math.toRadians(-90))
                 .build();
@@ -82,6 +83,19 @@ public class SpecimenAuto extends LinearOpMode{
         alignSecond = drive.actionBuilder(new Pose2d(2.00, 44.00, Math.toRadians(90.00)))
                 .lineToYConstantHeading(40.5)
                 .waitSeconds(0.5)
+                .build();
+
+        pushSpecimens = drive.actionBuilder(new Pose2d(0, 41, Math.toRadians(90)))
+                .splineTo(new Vector2d(-36.5, 24), Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(-48, 10), Math.toRadians(90))
+                .lineToY(55)
+                .lineToY(10)
+                .lineToX(-60)
+                .lineToY(55)
+                .lineToY(10)
+                .lineToX(-70)
+                .lineToY(55)
+                .lineToY(10)
                 .build();
 
 
@@ -99,14 +113,15 @@ public class SpecimenAuto extends LinearOpMode{
                     ),
                         align,
                         linearSlides.home(),
-                        pickupNew,
+                        pushSpecimens
+                        /*pickupNew,
                         linearSlides.take(),
                         moveFromWall,
                         hangNext,
                         linearSlides.runToHighRung(),
                         alignNext,
                         linearSlides.home(),
-                        pickupSecond
+                        pickupSecond */
                 )
             );
     }

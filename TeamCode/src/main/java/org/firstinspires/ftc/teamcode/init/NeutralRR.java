@@ -14,9 +14,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-//Import our used RoadRunnerActions
+//Import our used RoadRunner Actions
 import org.firstinspires.ftc.teamcode.customAction.linearSlideRR;
 import org.firstinspires.ftc.teamcode.customAction.clawRR;
+
+//Import used non-RoadRunner Actions
+import org.firstinspires.ftc.teamcode.action.mecanumDrive;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
@@ -36,13 +39,16 @@ public class NeutralRR extends LinearOpMode{
     Action secondRunToBasket;
     Action lastRunToBasket;
     Action clear;
+    private static final ElapsedTime driveTime = new ElapsedTime();
 
     @Override
     public void runOpMode() throws InterruptedException {
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(11.94, 62.36, Math.toRadians(90.00)));
         clawRR claw = new clawRR(hardwareMap);
         linearSlideRR linearSlides = new linearSlideRR(hardwareMap);
+        mecanumDrive mecanumDrive = new mecanumDrive();
         Actions.runBlocking(claw.initializer());
+        mecanumDrive.init(this);
 
         //This runs us to the rungs to hang our preload specimen
         start = drive.actionBuilder(new Pose2d(11.94, 62.36, Math.toRadians(90.00)))
@@ -96,10 +102,15 @@ public class NeutralRR extends LinearOpMode{
                                 start,
                                 new SequentialAction(
                                         linearSlides.angleSlidesUp(),
-                                        claw.angle(),
-                                        linearSlides.runToHighRung()
+                                        claw.angle()
                                 )
-                        ),
+                        )
+                )
+        );
+
+
+
+        /*
                         align,
                         linearSlides.home(),
                         new ParallelAction(
@@ -209,7 +220,7 @@ public class NeutralRR extends LinearOpMode{
                         claw.angle(),
                         linearSlides.angleSlidesDown()
                 )
-        );
+        );*/
     }
 }
 
