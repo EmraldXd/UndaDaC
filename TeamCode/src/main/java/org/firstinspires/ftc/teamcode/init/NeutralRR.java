@@ -12,6 +12,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 //Import our used RoadRunner Actions
@@ -39,6 +40,9 @@ public class NeutralRR extends LinearOpMode{
     Action secondRunToBasket;
     Action lastRunToBasket;
     Action clear;
+    DcMotor encoder;
+
+    double lastReadPosition;
     private static final ElapsedTime driveTime = new ElapsedTime();
 
     @Override
@@ -49,6 +53,8 @@ public class NeutralRR extends LinearOpMode{
         mecanumDrive mecanumDrive = new mecanumDrive();
         Actions.runBlocking(claw.initializer());
         mecanumDrive.init(this);
+        encoder = hardwareMap.get(DcMotor.class, "LeftSlide");
+
 
         //This runs us to the rungs to hang our preload specimen
         start = drive.actionBuilder(new Pose2d(11.94, 62.36, Math.toRadians(90.00)))
@@ -108,14 +114,20 @@ public class NeutralRR extends LinearOpMode{
                 )
         );
 
-        driveTime.reset();
-        while(opModeIsActive() && driveTime.time() < 0.5) {
-            mecanumDrive.setPower(0, 1, 0);
-        }
-        driveTime.reset();
-        while(opModeIsActive() && driveTime.time() < 0.25) {
-            mecanumDrive.setPower(0, -1, 0);
-        }
+        lastReadPosition = encoder.getCurrentPosition();
+        while(opModeIsActive()) {
+            while (true) {
+                mecanumDrive.setPower(0, 1, 0);
+                if (encoder.getCurrentPosition() - lastReadPosition >= 10 && encoder.getCurrentPosition() - lastReadPosition <= -10) {
+                    break;
+                }
+                lastReadPosition = encoder.getCurrentPosition();
+            }
+            }
+            driveTime.reset();
+            while (opModeIsActive() && driveTime.time() < 0.25) {
+                mecanumDrive.setPower(0, -1, 0);
+            }
 
 
         /*
