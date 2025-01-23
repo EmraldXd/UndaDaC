@@ -132,11 +132,12 @@ public class NeutralRR extends LinearOpMode{
 
         driveTime.reset();
         lastReadPosition = encoder.getCurrentPosition();
-        while (opModeIsActive() && Math.abs(lastReadPosition - encoder.getCurrentPosition()) > 1350) {
-            telemetry.addData("Dist.Traveled: ", Math.abs(lastReadPosition - encoder.getCurrentPosition()));
+        while (opModeIsActive() && Math.abs(Math.abs(lastReadPosition) - Math.abs(encoder.getCurrentPosition())) < 2360) {
+            telemetry.addData("Dist.Traveled: ", Math.abs(Math.abs(lastReadPosition) - Math.abs(encoder.getCurrentPosition())));
             telemetry.update();
             mecanumDrive.setPower(0, -1, 0);
         }
+        mecanumDrive.setPower(0, 0, 0);
 
 
         /*
