@@ -109,11 +109,11 @@ public class NeutralRR extends LinearOpMode{
         );
 
         driveTime.reset();
-        while(driveTime.time() < 0.5) {
+        while(opModeIsActive() && driveTime.time() < 0.5) {
             mecanumDrive.setPower(0, 1, 0);
         }
         driveTime.reset();
-        while(driveTime.time() < 0.25) {
+        while(opModeIsActive() && driveTime.time() < 0.25) {
             mecanumDrive.setPower(0, -1, 0);
         }
 

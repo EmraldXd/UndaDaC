@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.action.mecanumDrive;
 import org.firstinspires.ftc.teamcode.action.linearSlides;
 import org.firstinspires.ftc.teamcode.action.claw;
 import org.firstinspires.ftc.teamcode.action.roller;
-@TeleOp (name = "THIS IS TELEOP", group = "Main")
+@TeleOp (name = "!THIS IS TELEOP", group = "Main")
 public class teleOp extends OpMode {
     mecanumDrive mecanumDrive = new mecanumDrive();
     linearSlides linearSlides = new linearSlides();
