@@ -116,11 +116,12 @@ public class NeutralRR extends LinearOpMode{
 
         lastReadPosition = encoder.getCurrentPosition();
         while(opModeIsActive()) {
-            while (true) {
+            while (opModeIsActive()) {
                 mecanumDrive.setPower(0, 1, 0);
                 if (encoder.getCurrentPosition() - lastReadPosition >= 10 && encoder.getCurrentPosition() - lastReadPosition <= -10) {
                     break;
                 }
+                telemetry.addData("delta pos: ", encoder.getCurrentPosition() - lastReadPosition);
                 lastReadPosition = encoder.getCurrentPosition();
             }
             }
