@@ -53,7 +53,7 @@ public class NeutralRR extends LinearOpMode{
         mecanumDrive mecanumDrive = new mecanumDrive();
         Actions.runBlocking(claw.initializer());
         mecanumDrive.init(this);
-        encoder = hardwareMap.get(DcMotor.class, "LeftSlide");
+        encoder = hardwareMap.get(DcMotor.class, "ParEncoder");
 
 
         //This runs us to the rungs to hang our preload specimen
@@ -118,10 +118,11 @@ public class NeutralRR extends LinearOpMode{
         while(opModeIsActive()) {
             while (opModeIsActive()) {
                 mecanumDrive.setPower(0, 1, 0);
-                if (encoder.getCurrentPosition() - lastReadPosition >= 10 && encoder.getCurrentPosition() - lastReadPosition <= -10) {
+                if (encoder.getCurrentPosition() - lastReadPosition <= 10 && encoder.getCurrentPosition() - lastReadPosition >= -10) {
                     break;
                 }
                 telemetry.addData("delta pos: ", encoder.getCurrentPosition() - lastReadPosition);
+                telemetry.update();
                 lastReadPosition = encoder.getCurrentPosition();
             }
             }
