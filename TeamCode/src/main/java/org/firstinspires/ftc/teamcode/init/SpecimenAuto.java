@@ -90,10 +90,10 @@ public class SpecimenAuto extends LinearOpMode{
                 .splineToConstantHeading(new Vector2d(-48, 10), Math.toRadians(90))
                 .lineToY(55)
                 .lineToY(10)
-                .lineToX(-60)
+                .strafeTo(new Vector2d(-60, 10))
                 .lineToY(55)
                 .lineToY(10)
-                .lineToX(-70)
+                .strafeTo(new Vector2d(-70, 10))
                 .lineToY(55)
                 .lineToY(10)
                 .build();
