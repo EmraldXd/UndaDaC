@@ -88,11 +88,11 @@ public class NeutralRR extends LinearOpMode{
 
         secondRunToBasket = drive.actionBuilder(new Pose2d(56, 41, Math.toRadians(-90)))
                 .setReversed(true)
-                .splineTo(new Vector2d(48, 52), Math.toRadians(45),
+                .splineTo(new Vector2d(48, 52), Math.toRadians(60),
                         new TranslationalVelConstraint(30.0))
                 .build();
 
-        pickupThird = drive.actionBuilder(new Pose2d(-55, -55, Math.toRadians(-135)))
+        pickupThird = drive.actionBuilder(new Pose2d(-55, -55, Math.toRadians(-120)))
                 .splineTo(new Vector2d(55, 33), Math.toRadians(-30))
                 .build();
 
