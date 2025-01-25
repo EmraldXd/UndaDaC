@@ -139,9 +139,12 @@ public class NeutralRR extends LinearOpMode{
         }
         mecanumDrive.setPower(0, 0, 0);
 
+
+        Actions.runBlocking(linearSlides.runToHighRung());
+
         driveTime.reset();
-        while(opModeIsActive() && driveTime.time() < 0.25) {
-            mecanumDrive.setPower(0, 1, 0);
+        while(opModeIsActive() && driveTime.time() < 0.5) {
+            mecanumDrive.setPower(0, 0.5, 0);
         }
         mecanumDrive.setPower(0, 0, 0);
 
