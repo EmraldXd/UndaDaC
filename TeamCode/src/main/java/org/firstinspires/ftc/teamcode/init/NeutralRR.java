@@ -139,9 +139,14 @@ public class NeutralRR extends LinearOpMode{
         }
         mecanumDrive.setPower(0, 0, 0);
 
+        driveTime.reset();
+        while(opModeIsActive() && driveTime.time() < 0.25) {
+            mecanumDrive.setPower(0, 1, 0);
+        }
+        mecanumDrive.setPower(0, 0, 0);
 
-        /*
-                        align,
+        Actions.runBlocking(
+                new SequentialAction(
                         linearSlides.home(),
                         new ParallelAction(
                                 pickupFirst,
@@ -250,7 +255,7 @@ public class NeutralRR extends LinearOpMode{
                         claw.angle(),
                         linearSlides.angleSlidesDown()
                 )
-        );*/
+        );
     }
 }
 
