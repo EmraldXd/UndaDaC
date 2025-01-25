@@ -93,9 +93,9 @@ public class SpecimenAuto extends LinearOpMode{
                 .strafeTo(new Vector2d(-60, 10))
                 .strafeTo(new Vector2d(-60, 55))
                 .strafeTo(new Vector2d(-60,10))
-                .strafeTo(new Vector2d(-70, 10))
-                .strafeTo(new Vector2d(-60,55))
-                .strafeTo(new Vector2d(-70,10))
+                .strafeTo(new Vector2d(-62.5, 10))
+                .strafeTo(new Vector2d(-62.5,55))
+                .strafeTo(new Vector2d(-62.5,30))
                 .build();
 
 
