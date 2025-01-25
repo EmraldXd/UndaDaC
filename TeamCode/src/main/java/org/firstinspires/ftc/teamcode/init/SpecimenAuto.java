@@ -88,14 +88,14 @@ public class SpecimenAuto extends LinearOpMode{
         pushSpecimens = drive.actionBuilder(new Pose2d(0, 41, Math.toRadians(90)))
                 .splineTo(new Vector2d(-36.5, 24), Math.toRadians(-90))
                 .splineToConstantHeading(new Vector2d(-48, 10), Math.toRadians(90))
-                .lineToY(55)
-                .lineToY(10)
+                .strafeTo(new Vector2d(-48, 55))
+                .strafeTo(new Vector2d(-48,10))
                 .strafeTo(new Vector2d(-60, 10))
-                .lineToY(55)
-                .lineToY(10)
+                .strafeTo(new Vector2d(-60, 55))
+                .strafeTo(new Vector2d(-60,10))
                 .strafeTo(new Vector2d(-70, 10))
-                .lineToY(55)
-                .lineToY(10)
+                .strafeTo(new Vector2d(-60,55))
+                .strafeTo(new Vector2d(-70,10))
                 .build();
 
 
