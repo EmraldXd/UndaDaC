@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -69,22 +70,26 @@ public class NeutralRR extends LinearOpMode{
                 .build();
 
         pickupFirst = drive.actionBuilder(new Pose2d(0.00, 40.00, Math.toRadians(90.00)))
-                .splineTo(new Vector2d(47.5, 43), Math.toRadians(-90.00))
+                .splineTo(new Vector2d(47.5, 43), Math.toRadians(-90.00),
+                    new TranslationalVelConstraint(30.0))
                 .waitSeconds(0.5)
                 .build();
 
         firstRunToBasket = drive.actionBuilder((new Pose2d(47.5, 43, Math.toRadians(-90))))
                 .setReversed(true)
-                .splineTo(new Vector2d(48, 52), Math.toRadians(45))
+                .splineTo(new Vector2d(48, 52), Math.toRadians(45),
+                        new TranslationalVelConstraint(30.0))
                 .build();
 
         pickupSecond = drive.actionBuilder(new Pose2d(48, 52, Math.toRadians(-135)))
-                .splineTo(new Vector2d(58, 43), Math.toRadians(-90))
+                .splineTo(new Vector2d(58, 43), Math.toRadians(-90),
+                        new TranslationalVelConstraint(30.0))
                 .build();
 
         secondRunToBasket = drive.actionBuilder(new Pose2d(56, 41, Math.toRadians(-90)))
                 .setReversed(true)
-                .splineTo(new Vector2d(48, 52), Math.toRadians(45))
+                .splineTo(new Vector2d(48, 52), Math.toRadians(45),
+                        new TranslationalVelConstraint(30.0))
                 .build();
 
         pickupThird = drive.actionBuilder(new Pose2d(-55, -55, Math.toRadians(-135)))
@@ -97,7 +102,8 @@ public class NeutralRR extends LinearOpMode{
                 .build();
 
         clear = drive.actionBuilder(new Pose2d(48,  52, Math.toRadians(-135)))
-                .splineTo(new Vector2d(46, 50), Math.toRadians(-135))
+                .splineTo(new Vector2d(46, 50), Math.toRadians(-135),
+                        new TranslationalVelConstraint(30.0))
                 .build();
 
         waitForStart();
@@ -135,7 +141,7 @@ public class NeutralRR extends LinearOpMode{
         while (opModeIsActive() && Math.abs(Math.abs(lastReadPosition) - Math.abs(encoder.getCurrentPosition())) < 2360) {
             telemetry.addData("Dist.Traveled: ", Math.abs(Math.abs(lastReadPosition) - Math.abs(encoder.getCurrentPosition())));
             telemetry.update();
-            mecanumDrive.setPower(0, -1, 0);
+            mecanumDrive.setPower(0, -0.5, 0);
         }
         mecanumDrive.setPower(0, 0, 0);
 
