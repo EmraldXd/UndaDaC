@@ -11,10 +11,15 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 //Import our used RoadRunnerActions
 import org.firstinspires.ftc.teamcode.customAction.linearSlideRR;
 import org.firstinspires.ftc.teamcode.customAction.clawRR;
+
+//Import non-roadrunner things
+import org.firstinspires.ftc.teamcode.action.mecanumDrive;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
@@ -30,6 +35,10 @@ public class SpecimenAuto extends LinearOpMode{
     Action hangSecond;
     Action alignSecond;
     Action pushSpecimens;
+    DcMotor encoder;
+    double lastReadPosition;
+    private static final ElapsedTime driveTime = new ElapsedTime();
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -37,6 +46,7 @@ public class SpecimenAuto extends LinearOpMode{
         clawRR claw = new clawRR(hardwareMap);
         linearSlideRR linearSlides = new linearSlideRR(hardwareMap);
         Actions.runBlocking(claw.initializer());
+        mecanumDrive mecanumDrive = new mecanumDrive();
 
 
         //This runs us to the rungs to hang our preload specimen
@@ -51,8 +61,8 @@ public class SpecimenAuto extends LinearOpMode{
                 .waitSeconds(0.5)
                 .build();
 
-        pickupNew = drive.actionBuilder(new Pose2d(0.00, 40.00, Math.toRadians(90.00)))
-                .splineTo(new Vector2d(-40, 42), Math.toRadians(-90))
+        pickupNew = drive.actionBuilder(new Pose2d(62.5, 40.00, Math.toRadians(90.00)))
+                .splineTo(new Vector2d(-40, 40), Math.toRadians(-90))
                 .lineToYConstantHeading(61)
                 .build();
 
@@ -107,13 +117,57 @@ public class SpecimenAuto extends LinearOpMode{
                         start,
                         new SequentialAction(
                                 linearSlides.angleSlidesUp(),
-                                claw.angle(),
-                                linearSlides.runToHighRung()
+                                claw.angle()
                         )
-                    ),
-                        align,
+                    )
+                )
+        );
+
+        lastReadPosition = encoder.getCurrentPosition();
+        driveTime.reset();
+        while (opModeIsActive()) {
+            mecanumDrive.setPower(0, .75, 0);
+            telemetry.addData("delta pos: ", encoder.getCurrentPosition() - lastReadPosition);
+            telemetry.update();
+            if ((driveTime.time() >= 0.200) && (encoder.getCurrentPosition() - lastReadPosition >= -2)) {
+                //telemetry.addData("delta pos: ", "break");
+                //telemetry.update();
+                break;
+            }
+            telemetry.addData("delta pos: ", encoder.getCurrentPosition() - lastReadPosition);
+            telemetry.update();
+            lastReadPosition = encoder.getCurrentPosition();
+        }
+
+        driveTime.reset();
+        lastReadPosition = encoder.getCurrentPosition();
+        while (opModeIsActive() && driveTime.time() < 1.125) {
+            telemetry.addData("Dist.Traveled: ", Math.abs(Math.abs(lastReadPosition) - Math.abs(encoder.getCurrentPosition())));
+            telemetry.update();
+            mecanumDrive.setPower(0, -0.75, 0);
+        }
+        mecanumDrive.setPower(0, 0, 0);
+
+
+
+        Actions.runBlocking(linearSlides.runToHighRung());
+
+        driveTime.reset();
+        while(opModeIsActive() && driveTime.time() < 0.5) {
+            mecanumDrive.setPower(0, 0.7, 0);
+        }
+        mecanumDrive.setPower(0, 0, 0);
+
+        Actions.runBlocking(
+                new SequentialAction(
                         linearSlides.home(),
                         pushSpecimens
+                )
+        );
+
+        sleep(1000);
+
+        Actions.runBlocking(pickupNew);
                         /*pickupNew,
                         linearSlides.take(),
                         moveFromWall,
@@ -121,8 +175,8 @@ public class SpecimenAuto extends LinearOpMode{
                         linearSlides.runToHighRung(),
                         alignNext,
                         linearSlides.home(),
-                        pickupSecond */
+                        pickupSecond
                 )
-            );
+            );*/
     }
 }

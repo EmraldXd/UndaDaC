@@ -70,25 +70,25 @@ public class NeutralRR extends LinearOpMode{
                 .build();
 
         pickupFirst = drive.actionBuilder(new Pose2d(0.00, 40.00, Math.toRadians(90.00)))
-                .splineTo(new Vector2d(47.5, 43), Math.toRadians(-90.00),
+                .strafeToLinearHeading(new Vector2d(44, 44), Math.toRadians(-90.00),
                     new TranslationalVelConstraint(30.0))
                 .waitSeconds(0.5)
                 .build();
 
-        firstRunToBasket = drive.actionBuilder((new Pose2d(47.5, 43, Math.toRadians(-90))))
+        firstRunToBasket = drive.actionBuilder((new Pose2d(45, 45, Math.toRadians(-90))))
                 .setReversed(true)
-                .splineTo(new Vector2d(48, 52), Math.toRadians(45),
+                .strafeToLinearHeading(new Vector2d(48, 53), Math.toRadians(-135),
                         new TranslationalVelConstraint(30.0))
                 .build();
 
-        pickupSecond = drive.actionBuilder(new Pose2d(48, 52, Math.toRadians(-135)))
-                .splineTo(new Vector2d(58, 43), Math.toRadians(-90),
+        pickupSecond = drive.actionBuilder(new Pose2d(49, 53, Math.toRadians(-135)))
+                .strafeToLinearHeading(new Vector2d(54, 46), Math.toRadians(-90),
                         new TranslationalVelConstraint(30.0))
                 .build();
 
-        secondRunToBasket = drive.actionBuilder(new Pose2d(56, 41, Math.toRadians(-90)))
+        secondRunToBasket = drive.actionBuilder(new Pose2d(55, 46, Math.toRadians(-90)))
                 .setReversed(true)
-                .splineTo(new Vector2d(48, 52), Math.toRadians(60),
+                .strafeToLinearHeading(new Vector2d(48, 52), Math.toRadians(-135),
                         new TranslationalVelConstraint(30.0))
                 .build();
 
@@ -108,22 +108,12 @@ public class NeutralRR extends LinearOpMode{
 
         waitForStart();
 
-        Actions.runBlocking(
-                new SequentialAction(
-                        new ParallelAction(
-                                start,
-                                new SequentialAction(
-                                        linearSlides.angleSlidesUp(),
-                                        claw.angle()
-                                )
-                        )
-                )
-        );
+        Actions.runBlocking(start);
 
         lastReadPosition = encoder.getCurrentPosition();
         driveTime.reset();
         while (opModeIsActive()) {
-            mecanumDrive.setPower(0, 1, 0);
+            mecanumDrive.setPower(0, .75, 0);
             telemetry.addData("delta pos: ", encoder.getCurrentPosition() - lastReadPosition);
             telemetry.update();
             if ((driveTime.time() >= 0.200) && (encoder.getCurrentPosition() - lastReadPosition >= -2)) {
@@ -138,19 +128,25 @@ public class NeutralRR extends LinearOpMode{
 
         driveTime.reset();
         lastReadPosition = encoder.getCurrentPosition();
-        while (opModeIsActive() && Math.abs(Math.abs(lastReadPosition) - Math.abs(encoder.getCurrentPosition())) < 2360) {
+        while (opModeIsActive() && driveTime.time() < 1.125) {
             telemetry.addData("Dist.Traveled: ", Math.abs(Math.abs(lastReadPosition) - Math.abs(encoder.getCurrentPosition())));
             telemetry.update();
-            mecanumDrive.setPower(0, -0.5, 0);
+            mecanumDrive.setPower(0, -0.75, 0);
         }
         mecanumDrive.setPower(0, 0, 0);
 
 
-        Actions.runBlocking(linearSlides.runToHighRung());
+        Actions.runBlocking(
+                new SequentialAction(
+                        linearSlides.angleSlidesUp(),
+                        claw.angle(),
+                        linearSlides.runToHighRung()
+                )
+        );
 
         driveTime.reset();
         while(opModeIsActive() && driveTime.time() < 0.5) {
-            mecanumDrive.setPower(0, 0.5, 0);
+            mecanumDrive.setPower(0, 0.7, 0);
         }
         mecanumDrive.setPower(0, 0, 0);
 
@@ -188,9 +184,9 @@ public class NeutralRR extends LinearOpMode{
                                 firstRunToBasket,
                                 linearSlides.angleSlidesUp()
                         ),
-                        new ParallelAction(
-                                linearSlides.runToHighBasket(),
-                                claw.angle()
+                        new SequentialAction(
+                                claw.angle(),
+                                linearSlides.runToHighBasket()
                         ),
                         claw.angle()
                 )
