@@ -70,25 +70,25 @@ public class NeutralRR extends LinearOpMode{
                 .build();
 
         pickupFirst = drive.actionBuilder(new Pose2d(0.00, 40.00, Math.toRadians(90.00)))
-                .strafeToLinearHeading(new Vector2d(44, 44), Math.toRadians(-90.00),
+                .strafeToLinearHeading(new Vector2d(43.5, 41), Math.toRadians(-90.00),
                     new TranslationalVelConstraint(30.0))
                 .waitSeconds(0.5)
                 .build();
 
-        firstRunToBasket = drive.actionBuilder((new Pose2d(45, 45, Math.toRadians(-90))))
+        firstRunToBasket = drive.actionBuilder((new Pose2d(43.5, 42, Math.toRadians(-90))))
                 .setReversed(true)
-                .strafeToLinearHeading(new Vector2d(48, 53), Math.toRadians(-135),
+                .strafeToLinearHeading(new Vector2d(46, 51), Math.toRadians(-135),
                         new TranslationalVelConstraint(30.0))
                 .build();
 
-        pickupSecond = drive.actionBuilder(new Pose2d(49, 53, Math.toRadians(-135)))
-                .strafeToLinearHeading(new Vector2d(54, 46), Math.toRadians(-90),
+        pickupSecond = drive.actionBuilder(new Pose2d(46, 51, Math.toRadians(-135)))
+                .strafeToLinearHeading(new Vector2d(54, 45.5), Math.toRadians(-90),
                         new TranslationalVelConstraint(30.0))
                 .build();
 
-        secondRunToBasket = drive.actionBuilder(new Pose2d(55, 46, Math.toRadians(-90)))
+        secondRunToBasket = drive.actionBuilder(new Pose2d(54, 45.5, Math.toRadians(-90)))
                 .setReversed(true)
-                .strafeToLinearHeading(new Vector2d(48, 52), Math.toRadians(-135),
+                .strafeToLinearHeading(new Vector2d(45, 52), Math.toRadians(-135),
                         new TranslationalVelConstraint(30.0))
                 .build();
 
@@ -170,9 +170,11 @@ public class NeutralRR extends LinearOpMode{
                 )
         );
 
+        sleep(300);
+
         Actions.runBlocking(claw.close());
 
-        sleep(500);
+        sleep(300);
 
         Actions.runBlocking(
                 new SequentialAction(

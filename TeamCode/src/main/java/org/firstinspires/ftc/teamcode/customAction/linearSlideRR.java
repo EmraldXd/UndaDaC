@@ -37,7 +37,7 @@ public class linearSlideRR {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
 
-            if(angleMotor.getCurrentPosition() >= 3400) {
+            if(angleMotor.getCurrentPosition() >= 3700) {
                 angleMotor.setPower(0);
                 return false;
             }
