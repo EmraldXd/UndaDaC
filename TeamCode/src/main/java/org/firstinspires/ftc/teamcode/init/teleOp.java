@@ -21,14 +21,15 @@ public class teleOp extends OpMode {
         //Initialize our motors
         mecanumDrive.init(this);
         linearSlides.init(this);
-        claw.init(this);
         //roller.init(this);
+        claw.upOrDown(linearSlides.moveUpOrDown());
     }
 
     public void start() {
         mecanumDrive.runWithoutEncoder();
         linearSlides.setSlides();
         dashboard = FtcDashboard.getInstance();
+        claw.init(this);
     }
 
     @Override
@@ -45,7 +46,7 @@ public class teleOp extends OpMode {
         //Controls for claw();
         claw.moveClaw(gamepad2.a, linearSlides.liftTime());
         claw.useClaw(gamepad2.right_bumper);
-        claw.rotateClaw(gamepad2.dpad_left, gamepad2.dpad_right);
+        claw.rotateClaw(gamepad2.left_bumper);
         claw.showTelemetry();
         claw.lift(linearSlides.liftTime());
         claw.moveArm(linearSlides.moveUpOrDown(), gamepad2.back);

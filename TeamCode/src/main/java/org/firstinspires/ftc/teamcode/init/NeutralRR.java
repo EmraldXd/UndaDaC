@@ -170,11 +170,11 @@ public class NeutralRR extends LinearOpMode{
                 )
         );
 
-        sleep(300);
+        sleep(400);
 
         Actions.runBlocking(claw.close());
 
-        sleep(300);
+        sleep(400);
 
         Actions.runBlocking(
                 new SequentialAction(

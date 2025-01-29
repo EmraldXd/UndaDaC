@@ -35,7 +35,7 @@ public class mecanumDrive {
     double adjustedY;
     Telemetry telemetry;
     // DECLARE CUSTOM
-    static double totalSpeed = 0.75; //This is to control the percent of energy being applied to the motors.
+    static double totalSpeed = 0.8; //This is to control the percent of energy being applied to the motors.
     double slowSpeed = 0.50; // x% of whatever speed totalSpeed is
 
     // METHODS

@@ -187,6 +187,10 @@ public class linearSlides {
         }
     }
 
+    public double current() {
+        return ticksToRadians(angleMotor.getCurrentPosition());
+    }
+
     /**
      * This was used to find if the angle motor was following when using bevel gears before we swapped
      * to a worm gear. This would prevent us from getting penalized by giving the linear slides a

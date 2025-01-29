@@ -14,7 +14,7 @@ import java.text.DecimalFormat;
 public class claw {
     static final DecimalFormat df = new DecimalFormat("0.00");
     Telemetry telemetry;
-    private double DELAY = 0.75;
+    private double DELAY = 0.25;
     private static final ElapsedTime anglerDelay = new ElapsedTime();
     private static final ElapsedTime delayToggle = new ElapsedTime();
     private static final ElapsedTime delayClaw = new ElapsedTime();
@@ -26,6 +26,7 @@ public class claw {
     private boolean isClosed;
     private boolean isTurned;
     private boolean clawToggle;
+    private boolean upOrDown;
     private boolean up;
     public void init(@NonNull OpMode opmode){
         HardwareMap hardwareMap = opmode.hardwareMap;
@@ -38,10 +39,13 @@ public class claw {
         isClosed = false;
         isTurned = false;
         clawToggle = false;
-        up = true;
         //Turn Servos on
         clawAngle.setPosition(0);
-        clawJoint.setPosition(0);
+        if(up) {
+            clawJoint.setPosition(0.0);
+        } else {
+            clawAngle.setPosition(0.085);
+        }
         claw.setPosition(0);
     }
 
@@ -74,12 +78,12 @@ public class claw {
         }
     }
 
-    public void rotateClaw(boolean isLeftPressed, boolean isRightPressed) {
-        if(isLeftPressed && anglerDelay.time() > DELAY) {
+    public void rotateClaw(boolean isPressed) {
+        if(isPressed && anglerDelay.time() > DELAY && !isTurned) {
             clawAngle.setPosition(0.3);
             isTurned = true;
             anglerDelay.reset();
-        } else if (isRightPressed && anglerDelay.time() > DELAY){
+        } else if (isPressed && anglerDelay.time() > DELAY && isTurned){
             clawAngle.setPosition(0);
             isTurned = false;
             anglerDelay.reset();
@@ -101,6 +105,14 @@ public class claw {
                 clawJoint.setPosition(0);
                 up = true;
             }
+        }
+    }
+
+    public void upOrDown(String move) {
+        if (move.equals("Raise")) {
+            up = false;
+        } else if (move.equals("Lower")) {
+            up = true;
         }
     }
 

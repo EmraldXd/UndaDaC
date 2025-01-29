@@ -47,6 +47,7 @@ public class SpecimenAuto extends LinearOpMode{
         linearSlideRR linearSlides = new linearSlideRR(hardwareMap);
         Actions.runBlocking(claw.initializer());
         mecanumDrive mecanumDrive = new mecanumDrive();
+        encoder = hardwareMap.get(DcMotor.class, "ParEncoder");
 
 
         //This runs us to the rungs to hang our preload specimen
@@ -61,9 +62,9 @@ public class SpecimenAuto extends LinearOpMode{
                 .waitSeconds(0.5)
                 .build();
 
-        pickupNew = drive.actionBuilder(new Pose2d(62.5, 40.00, Math.toRadians(90.00)))
-                .splineTo(new Vector2d(-40, 40), Math.toRadians(-90))
-                .lineToYConstantHeading(61)
+        pickupNew = drive.actionBuilder(new Pose2d(-62.5, 40.00, Math.toRadians(90.00)))
+                .setReversed(true)
+                .strafeToLinearHeading(new Vector2d(-62.5,  61), Math.toRadians(-90))
                 .build();
 
         hangNext = drive.actionBuilder(new Pose2d(-38, 50, -90))
@@ -109,19 +110,11 @@ public class SpecimenAuto extends LinearOpMode{
                 .build();
 
 
+        mecanumDrive.init(this);
+
         waitForStart();
 
-        Actions.runBlocking(
-                new SequentialAction(
-                    new ParallelAction(
-                        start,
-                        new SequentialAction(
-                                linearSlides.angleSlidesUp(),
-                                claw.angle()
-                        )
-                    )
-                )
-        );
+        Actions.runBlocking(start);
 
         lastReadPosition = encoder.getCurrentPosition();
         driveTime.reset();
@@ -149,14 +142,20 @@ public class SpecimenAuto extends LinearOpMode{
         mecanumDrive.setPower(0, 0, 0);
 
 
-
-        Actions.runBlocking(linearSlides.runToHighRung());
+        Actions.runBlocking(
+                new SequentialAction(
+                        linearSlides.angleSlidesUp(),
+                        claw.angle(),
+                        linearSlides.runToHighRung()
+                )
+        );
 
         driveTime.reset();
         while(opModeIsActive() && driveTime.time() < 0.5) {
-            mecanumDrive.setPower(0, 0.7, 0);
+            mecanumDrive.setPower(0, 0.8, 0);
         }
         mecanumDrive.setPower(0, 0, 0);
+
 
         Actions.runBlocking(
                 new SequentialAction(
