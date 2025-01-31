@@ -138,7 +138,7 @@ public class NeutralRR extends LinearOpMode{
 
         Actions.runBlocking(
                 new SequentialAction(
-                        linearSlides.angleSlidesUp(),
+                        linearSlides.specimenAngle(),
                         claw.angle(),
                         linearSlides.runToHighRung()
                 )

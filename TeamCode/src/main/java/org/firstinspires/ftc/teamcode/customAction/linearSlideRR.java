@@ -37,7 +37,7 @@ public class linearSlideRR {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
 
-            if(angleMotor.getCurrentPosition() >= 3700) {
+            if(angleMotor.getCurrentPosition() >= 3750) {
                 angleMotor.setPower(0);
                 return false;
             }
@@ -141,6 +141,24 @@ public class linearSlideRR {
         }
     }
 
+    public class AngleSlidesSpecimen implements Action {
+
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+
+            if(angleMotor.getCurrentPosition() >= 3900) {
+                angleMotor.setPower(0);
+                return false;
+            }
+
+            angleMotor.setPower(1);
+            return true;
+        }
+    }
+
+
+
     //The callable actions
     public Action angleSlidesUp() {
         return new AngleSlidesUp();
@@ -169,4 +187,6 @@ public class linearSlideRR {
     public Action take() {
         return new takeSpecimen();
     }
+
+    public Action specimenAngle(){return new AngleSlidesSpecimen();}
 }

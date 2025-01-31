@@ -144,7 +144,7 @@ public class SpecimenAuto extends LinearOpMode{
 
         Actions.runBlocking(
                 new SequentialAction(
-                        linearSlides.angleSlidesUp(),
+                        linearSlides.specimenAngle(),
                         claw.angle(),
                         linearSlides.runToHighRung()
                 )
@@ -166,7 +166,13 @@ public class SpecimenAuto extends LinearOpMode{
 
         sleep(1000);
 
-        Actions.runBlocking(pickupNew);
+        Actions.runBlocking(
+                new ParallelAction(
+                        pickupNew,
+                        linearSlides.angleSlidesDown(),
+                        claw.angle()
+                        )
+        );
                         /*pickupNew,
                         linearSlides.take(),
                         moveFromWall,

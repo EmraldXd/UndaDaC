@@ -191,6 +191,12 @@ public class linearSlides {
         return ticksToRadians(angleMotor.getCurrentPosition());
     }
 
+    public void slideCheck() {
+        if(angleMotor.getMode() == DcMotor.RunMode.STOP_AND_RESET_ENCODER) {
+            angleMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+    }
+
     /**
      * This was used to find if the angle motor was following when using bevel gears before we swapped
      * to a worm gear. This would prevent us from getting penalized by giving the linear slides a
