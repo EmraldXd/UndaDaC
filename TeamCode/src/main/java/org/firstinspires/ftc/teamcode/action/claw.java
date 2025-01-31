@@ -56,13 +56,19 @@ public class claw {
         anglerDelay.reset();
     }
 
-    public void moveClaw(boolean a, boolean liftTime) {
+    public void moveClaw(boolean a, boolean liftTime, boolean b) {
         if(!liftTime) {
         if (a && jointDelay.time() > DELAY) {
             clawJoint.setPosition(up ? .085 : 0);
             up = !up;
             jointDelay.reset();
         }
+        }
+        //This is an override for teleop in the case the claw is angled when the robot is hanging
+        if (b && jointDelay.time() > DELAY) {
+            clawJoint.setPosition(up ? .085 : 0);
+            up = !up;
+            jointDelay.reset();
         }
     }
 
@@ -92,7 +98,7 @@ public class claw {
 
     public void lift(boolean lift) {
         if(!up && lift) {
-            moveClaw(true, true);
+            moveClaw(true, true, false);
         }
     }
 
