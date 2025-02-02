@@ -1,35 +1,26 @@
 package org.firstinspires.ftc.teamcode.init;
 
-import androidx.annotation.NonNull;
-
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-//Import our used RoadRunner Actions
-import org.firstinspires.ftc.teamcode.customAction.linearSlideRR;
-import org.firstinspires.ftc.teamcode.customAction.clawRR;
-
-//Import used non-RoadRunner Actions
-import org.firstinspires.ftc.teamcode.action.mecanumDrive;
-
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.action.mecanumDrive;
+import org.firstinspires.ftc.teamcode.customAction.clawRR;
+import org.firstinspires.ftc.teamcode.customAction.linearSlideRR;
 
-import java.io.SequenceInputStream;
-import java.util.concurrent.TimeUnit;
 
 @Autonomous
-public class NeutralRR extends LinearOpMode{
+public class Sample_Cubed extends LinearOpMode{
 
     //These are the actions the robot takes individually
     Action start;
@@ -46,6 +37,7 @@ public class NeutralRR extends LinearOpMode{
     double lastReadPosition;
     private static final ElapsedTime driveTime = new ElapsedTime();
 
+
     @Override
     public void runOpMode() throws InterruptedException {
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(11.94, 62.36, Math.toRadians(90.00)));
@@ -59,8 +51,7 @@ public class NeutralRR extends LinearOpMode{
 
         //This runs us to the rungs to hang our preload specimen
         start = drive.actionBuilder(new Pose2d(11.94, 62.36, Math.toRadians(90.00)))
-                .setReversed(true)
-                .splineToConstantHeading(new Vector2d(0.00, 43.00), Math.toRadians(-90.00))
+                .strafeToLinearHeading(new Vector2d(42.5, 45), Math.toRadians(-135))
                 .build();
 
         //This used in order to align our robot to hang the specimens
@@ -69,7 +60,7 @@ public class NeutralRR extends LinearOpMode{
                 .waitSeconds(0.5)
                 .build();
 
-        pickupFirst = drive.actionBuilder(new Pose2d(0.00, 40.00, Math.toRadians(90.00)))
+        pickupFirst = drive.actionBuilder(new Pose2d(42.5, 45.00, Math.toRadians(-135.00)))
                 .strafeToLinearHeading(new Vector2d(43.5, 38), Math.toRadians(-90.00),
                     new TranslationalVelConstraint(30.0))
                 .waitSeconds(0.5)
@@ -77,7 +68,7 @@ public class NeutralRR extends LinearOpMode{
 
         firstRunToBasket = drive.actionBuilder((new Pose2d(43.5, 42, Math.toRadians(-90))))
                 .setReversed(true)
-                .strafeToLinearHeading(new Vector2d(43.5, 45), Math.toRadians(-135),
+                .strafeToLinearHeading(new Vector2d(42.5, 45), Math.toRadians(-135),
                         new TranslationalVelConstraint(30.0))
                 .build();
 
@@ -106,49 +97,30 @@ public class NeutralRR extends LinearOpMode{
                         new TranslationalVelConstraint(30.0))
                 .build();
 
+        Actions.runBlocking(claw.close());
+
         waitForStart();
 
         Actions.runBlocking(start);
 
-        lastReadPosition = encoder.getCurrentPosition();
-        driveTime.reset();
-        while (opModeIsActive()) {
-            mecanumDrive.setPower(0, .75, 0);
-            telemetry.addData("delta pos: ", encoder.getCurrentPosition() - lastReadPosition);
-            telemetry.update();
-            if ((driveTime.time() >= 0.200) && (encoder.getCurrentPosition() - lastReadPosition >= -2)) {
-                //telemetry.addData("delta pos: ", "break");
-                //telemetry.update();
-                break;
-            }
-            telemetry.addData("delta pos: ", encoder.getCurrentPosition() - lastReadPosition);
-            telemetry.update();
-            lastReadPosition = encoder.getCurrentPosition();
-        }
-
-        driveTime.reset();
-        lastReadPosition = encoder.getCurrentPosition();
-        while (opModeIsActive() && driveTime.time() < 1.125) {
-            telemetry.addData("Dist.Traveled: ", Math.abs(Math.abs(lastReadPosition) - Math.abs(encoder.getCurrentPosition())));
-            telemetry.update();
-            mecanumDrive.setPower(0, -0.75, 0);
-        }
-        mecanumDrive.setPower(0, 0, 0);
-
-
         Actions.runBlocking(
                 new SequentialAction(
-                        linearSlides.specimenAngle(),
+                        linearSlides.angleSlidesUp(),
                         claw.angle(),
-                        linearSlides.runToHighRung()
+                        linearSlides.runToHighBasket(),
+                        claw.angle()
                 )
         );
 
-        driveTime.reset();
-        while(opModeIsActive() && driveTime.time() < 0.5) {
-            mecanumDrive.setPower(0, 0.7, 0);
-        }
-        mecanumDrive.setPower(0, 0, 0);
+        sleep(400);
+
+        Actions.runBlocking(claw.open());
+
+        sleep(100);
+
+        Actions.runBlocking(claw.angle());
+
+        sleep(300);
 
         Actions.runBlocking(
                 new SequentialAction(

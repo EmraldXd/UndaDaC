@@ -44,7 +44,7 @@ public class claw {
         if(up) {
             clawJoint.setPosition(0.0);
         } else {
-            clawAngle.setPosition(0.085);
+            clawAngle.setPosition(.85);
         }
         claw.setPosition(0);
     }
@@ -59,14 +59,14 @@ public class claw {
     public void moveClaw(boolean a, boolean liftTime, boolean b) {
         if(!liftTime) {
         if (a && jointDelay.time() > DELAY) {
-            clawJoint.setPosition(up ? .5 : 0);
+            clawJoint.setPosition(up ? .85 : 0);
             up = !up;
             jointDelay.reset();
         }
         }
         //This is an override for teleop in the case the claw is angled when the robot is hanging
         if (b && jointDelay.time() > DELAY) {
-            clawJoint.setPosition(up ? .5 : 0);
+            clawJoint.setPosition(up ? .85 : 0);
             up = !up;
             jointDelay.reset();
         }
@@ -105,7 +105,7 @@ public class claw {
     public void moveArm(String move, boolean override) {
         if(!override) {
             if(move.equals("Raise")) {
-                clawJoint.setPosition(0.5);
+                clawJoint.setPosition(.85);
                 up = false;
             } else if(move.equals("Lower")) {
                 clawJoint.setPosition(0);

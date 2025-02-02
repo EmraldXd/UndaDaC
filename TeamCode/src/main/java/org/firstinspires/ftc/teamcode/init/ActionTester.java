@@ -13,6 +13,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 
 // Non-RR imports
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -23,6 +24,7 @@ import org.firstinspires.ftc.teamcode.customAction.intakeRR;
 import org.firstinspires.ftc.teamcode.customAction.clawRR;
 
 
+@Disabled
 @Autonomous
 public class ActionTester extends LinearOpMode {
     private static final ElapsedTime driveTime = new ElapsedTime();

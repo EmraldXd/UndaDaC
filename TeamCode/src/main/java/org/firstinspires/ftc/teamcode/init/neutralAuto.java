@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 // Non-RR imports
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.action.linearSlides;
 
 @Config
+@Disabled
 @Autonomous
 public class neutralAuto extends OpMode{
     org.firstinspires.ftc.teamcode.action.linearSlides linearSlides = new linearSlides();

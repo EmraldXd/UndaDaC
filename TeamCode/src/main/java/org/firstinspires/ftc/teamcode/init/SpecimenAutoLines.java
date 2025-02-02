@@ -1,12 +1,9 @@
 package org.firstinspires.ftc.teamcode.init;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -14,17 +11,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-//Import our used RoadRunnerActions
-import org.firstinspires.ftc.teamcode.customAction.linearSlideRR;
-import org.firstinspires.ftc.teamcode.customAction.clawRR;
-
-//Import non-roadrunner things
-import org.firstinspires.ftc.teamcode.action.mecanumDrive;
-
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.action.mecanumDrive;
+import org.firstinspires.ftc.teamcode.customAction.clawRR;
+import org.firstinspires.ftc.teamcode.customAction.linearSlideRR;
 
 @Autonomous
-public class SpecimenAuto extends LinearOpMode{
+public class SpecimenAutoLines extends LinearOpMode{
     Action start;
     Action align;
     Action alignNext;
@@ -53,7 +46,8 @@ public class SpecimenAuto extends LinearOpMode{
         //This runs us to the rungs to hang our preload specimen
         start = drive.actionBuilder(new Pose2d(-11.94, 62.36, Math.toRadians(90.00)))
                 .setReversed(true)
-                .splineTo(new Vector2d(0.00, 42.00), Math.toRadians(-90.00))
+                .strafeToConstantHeading(new Vector2d(11.94, 43.00))
+                .strafeToConstantHeading(new Vector2d(0.00, 43.00))
                 .build();
 
         //This used in order to align our robot to hang the specimens

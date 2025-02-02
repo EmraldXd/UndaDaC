@@ -41,13 +41,14 @@ public class teleOp extends OpMode {
         if(gamepad1.back || gamepad2.back) {
             if(swapDelay.time() > .75) {
                 mode = !mode;
+                swapDelay.reset();
             }
         }
 
         if(mode) {
             //Controls for mecanumDrive()
             mecanumDrive.slowMode(gamepad1.left_bumper);
-            mecanumDrive.driversideDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, false);
+            mecanumDrive.driversideDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.right_bumper);
             mecanumDrive.telemetryOutput();
             //Controls for linearSlides()
             linearSlides.angMotorPower(gamepad2.dpad_up, gamepad2.dpad_down);
@@ -75,7 +76,7 @@ public class teleOp extends OpMode {
         } else if (!mode) {
             //Controls for mecanumDrive()
             mecanumDrive.slowMode(gamepad2.left_bumper);
-            mecanumDrive.driversideDrive(gamepad2.left_stick_x, gamepad2.left_stick_y, gamepad2.right_stick_x, false);
+            mecanumDrive.driversideDrive(gamepad2.left_stick_x, gamepad2.left_stick_y, gamepad2.right_stick_x, gamepad2.right_bumper);
             mecanumDrive.telemetryOutput();
             //Controls for linearSlides()
             linearSlides.angMotorPower(gamepad1.dpad_up, gamepad1.dpad_down);

@@ -1,35 +1,25 @@
 package org.firstinspires.ftc.teamcode.init;
 
-import androidx.annotation.NonNull;
-
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-//Import our used RoadRunner Actions
-import org.firstinspires.ftc.teamcode.customAction.linearSlideRR;
-import org.firstinspires.ftc.teamcode.customAction.clawRR;
-
-//Import used non-RoadRunner Actions
-import org.firstinspires.ftc.teamcode.action.mecanumDrive;
-
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-
-import java.io.SequenceInputStream;
-import java.util.concurrent.TimeUnit;
+import org.firstinspires.ftc.teamcode.action.mecanumDrive;
+import org.firstinspires.ftc.teamcode.customAction.clawRR;
+import org.firstinspires.ftc.teamcode.customAction.linearSlideRR;
 
 @Autonomous
-public class NeutralRR extends LinearOpMode{
+public class AllSystemsAgain extends LinearOpMode{
 
     //These are the actions the robot takes individually
     Action start;
@@ -45,6 +35,7 @@ public class NeutralRR extends LinearOpMode{
 
     double lastReadPosition;
     private static final ElapsedTime driveTime = new ElapsedTime();
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -70,14 +61,14 @@ public class NeutralRR extends LinearOpMode{
                 .build();
 
         pickupFirst = drive.actionBuilder(new Pose2d(0.00, 40.00, Math.toRadians(90.00)))
-                .strafeToLinearHeading(new Vector2d(43.5, 38), Math.toRadians(-90.00),
+                .strafeToLinearHeading(new Vector2d(43.5, 40), Math.toRadians(-90.00),
                     new TranslationalVelConstraint(30.0))
                 .waitSeconds(0.5)
                 .build();
 
-        firstRunToBasket = drive.actionBuilder((new Pose2d(43.5, 42, Math.toRadians(-90))))
+        firstRunToBasket = drive.actionBuilder((new Pose2d(43.5, 40, Math.toRadians(-90))))
                 .setReversed(true)
-                .strafeToLinearHeading(new Vector2d(43.5, 45), Math.toRadians(-135),
+                .strafeToLinearHeading(new Vector2d(42.5, 45), Math.toRadians(-135),
                         new TranslationalVelConstraint(30.0))
                 .build();
 
@@ -107,6 +98,8 @@ public class NeutralRR extends LinearOpMode{
                 .build();
 
         waitForStart();
+
+        sleep(3000);
 
         Actions.runBlocking(start);
 

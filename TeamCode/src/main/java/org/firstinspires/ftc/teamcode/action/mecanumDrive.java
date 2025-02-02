@@ -144,6 +144,10 @@ public class mecanumDrive {
         bL.setPower(bLPwr);
         fR.setPower(fRPwr);
         bR.setPower(bRPwr);
+
+        if(reset) {
+            imu.resetYaw();
+        }
     }
 
     public void telemetryOutput() {

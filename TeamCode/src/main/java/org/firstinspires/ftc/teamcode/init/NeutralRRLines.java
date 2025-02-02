@@ -1,13 +1,9 @@
 package org.firstinspires.ftc.teamcode.init;
 
-import androidx.annotation.NonNull;
-
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -16,20 +12,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-//Import our used RoadRunner Actions
-import org.firstinspires.ftc.teamcode.customAction.linearSlideRR;
-import org.firstinspires.ftc.teamcode.customAction.clawRR;
-
-//Import used non-RoadRunner Actions
-import org.firstinspires.ftc.teamcode.action.mecanumDrive;
-
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-
-import java.io.SequenceInputStream;
-import java.util.concurrent.TimeUnit;
+import org.firstinspires.ftc.teamcode.action.mecanumDrive;
+import org.firstinspires.ftc.teamcode.customAction.clawRR;
+import org.firstinspires.ftc.teamcode.customAction.linearSlideRR;
 
 @Autonomous
-public class NeutralRR extends LinearOpMode{
+public class NeutralRRLines extends LinearOpMode{
 
     //These are the actions the robot takes individually
     Action start;
@@ -60,7 +49,8 @@ public class NeutralRR extends LinearOpMode{
         //This runs us to the rungs to hang our preload specimen
         start = drive.actionBuilder(new Pose2d(11.94, 62.36, Math.toRadians(90.00)))
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(0.00, 43.00), Math.toRadians(-90.00))
+                .strafeToConstantHeading(new Vector2d(11.94, 43.00))
+                .strafeToConstantHeading(new Vector2d(0.00, 43.00))
                 .build();
 
         //This used in order to align our robot to hang the specimens
@@ -77,7 +67,7 @@ public class NeutralRR extends LinearOpMode{
 
         firstRunToBasket = drive.actionBuilder((new Pose2d(43.5, 42, Math.toRadians(-90))))
                 .setReversed(true)
-                .strafeToLinearHeading(new Vector2d(43.5, 45), Math.toRadians(-135),
+                .strafeToLinearHeading(new Vector2d(42.5, 46.5), Math.toRadians(-135),
                         new TranslationalVelConstraint(30.0))
                 .build();
 
@@ -88,7 +78,7 @@ public class NeutralRR extends LinearOpMode{
 
         secondRunToBasket = drive.actionBuilder(new Pose2d(54, 45.5, Math.toRadians(-90)))
                 .setReversed(true)
-                .strafeToLinearHeading(new Vector2d(45, 48), Math.toRadians(-135),
+                .strafeToLinearHeading(new Vector2d(46, 48), Math.toRadians(-135),
                         new TranslationalVelConstraint(30.0))
                 .build();
 

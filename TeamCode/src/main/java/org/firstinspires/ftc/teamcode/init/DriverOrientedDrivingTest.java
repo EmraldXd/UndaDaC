@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcode.init;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.action.mecanumDrive;
 
+@Disabled
 @TeleOp
 public class DriverOrientedDrivingTest extends OpMode {
 

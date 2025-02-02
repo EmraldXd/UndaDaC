@@ -54,7 +54,7 @@ public class clawRR {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             if(joint.getPosition() == 0) {
-                joint.setPosition(.5);
+                joint.setPosition(.85);
                 finished = !finished;
             } else {
                 joint.setPosition(0);
