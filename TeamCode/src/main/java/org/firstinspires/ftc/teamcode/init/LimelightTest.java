@@ -10,19 +10,24 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.action.mecanumDrive;
 
 import java.util.List;
 
-
-@Disabled
 @TeleOp(name = "limelightTest", group = "Main")
 public class LimelightTest extends OpMode{
     org.firstinspires.ftc.teamcode.action.mecanumDrive mecanumDrive = new mecanumDrive();
     String current;
     Limelight3A limelight;
+    Position robotCoordinates;
+    IMU imu;
     public void init() {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
@@ -30,6 +35,9 @@ public class LimelightTest extends OpMode{
         limelight.pipelineSwitch(9);
 
         mecanumDrive.init(this);
+
+        imu = hardwareMap.get(IMU.class, "imu");
+        imu.resetYaw();
     }
 
     @Override
@@ -52,6 +60,15 @@ public class LimelightTest extends OpMode{
                 telemetry.addData("tync", result.getTyNC());
 
                 telemetry.addData("Botpose", botpose.toString());
+
+                robotCoordinates = botpose.getPosition();
+
+                telemetry.addData("Position X: ", robotCoordinates.x);
+                telemetry.addData("Position Y: ", robotCoordinates.y);
+
+                Pose2D robotPoseFlat = new Pose2D(DistanceUnit.INCH, robotCoordinates.x, robotCoordinates.y, AngleUnit.DEGREES, imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+
+                telemetry.addData("Current Pose2D: ", robotPoseFlat.toString());
 
                 // Access fiducial results
                 List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
