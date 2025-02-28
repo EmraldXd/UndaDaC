@@ -18,6 +18,7 @@ public class clawRR {
         angler = hardwareMap.get(Servo.class, "Angler");
     }
 
+    /** This initializes the claw for RoadRunner usage */
     public class initialize implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
@@ -32,6 +33,7 @@ public class clawRR {
         }
     }
 
+    /** This causes the claw to grab the samples in auto */
     public class grab implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
@@ -40,6 +42,7 @@ public class clawRR {
         }
     }
 
+    /** This sets up the claw to grab samples in auto by opening the claw */
     public class prep implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
@@ -48,8 +51,8 @@ public class clawRR {
         }
     }
 
+    /** This moves the arm to grab samples */
     public class moveArm implements Action {
-
         private boolean finished;
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {

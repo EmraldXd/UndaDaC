@@ -31,9 +31,9 @@ public class linearSlideRR {
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
+
+    /** This angles the slides upward to score samples or specimens */
     public class AngleSlidesUp implements Action {
-
-
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
 
@@ -47,8 +47,8 @@ public class linearSlideRR {
         }
     }
 
+    /** This returns the slides to their 0º position */
     public class AngleSlidesDown implements Action {
-
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             if(angleMotor.getCurrentPosition() <= 0) {
@@ -61,6 +61,7 @@ public class linearSlideRR {
         }
     }
 
+    /** This extends the linear slides to the height to hang specimens on the high rung */
     public class RunToHighRung implements Action{
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             telemetryPacket.put("a_rightPos", rightSlide.getCurrentPosition());
@@ -77,6 +78,7 @@ public class linearSlideRR {
         }
     }
 
+    /** This has the linear slides extend to the distance to place samples in the high baskets */
     public class RunToHighBasket implements Action {
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
 
@@ -92,8 +94,11 @@ public class linearSlideRR {
         }
     }
 
+    /**
+     * This extends the linear slides to the position to pick up samples of the spike marks on
+     * the ground.
+     */
     public class collectSample implements Action {
-
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
 
             if(rightSlide.getCurrentPosition() >= 2000) {
@@ -108,6 +113,7 @@ public class linearSlideRR {
         }
     }
 
+    /** This fully retracts the linear slides */
     public class runToZero implements Action {
         public boolean notInit = true;
 
@@ -125,6 +131,7 @@ public class linearSlideRR {
         }
     }
 
+    /** This slightly raises the linear slides to line up with the specimen hook */
     public class takeSpecimen implements Action {
         public boolean notInit = true;
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
@@ -141,9 +148,13 @@ public class linearSlideRR {
         }
     }
 
+    /**
+     * Not used anymore.
+     *
+     * This code is used to get the linear slides to the angle they need for our main claw to hang
+     * specimens on the high rung.
+     */
     public class AngleSlidesSpecimen implements Action {
-
-
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
 

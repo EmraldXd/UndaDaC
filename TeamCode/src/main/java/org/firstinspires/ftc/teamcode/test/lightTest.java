@@ -6,6 +6,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+
+/**
+ * This OpMode is here so that we can learn how to adjust the power of the robot light. We ended up
+ * not using this in the final build, but it was used to figure out how things work.
+ */
 @Disabled
 @TeleOp
 public class lightTest extends OpMode {

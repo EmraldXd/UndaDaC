@@ -96,6 +96,11 @@ public class linearSlides {
 
     public void slidePower(double x) {
         slidesPosition = Math.abs(rightSlide.getCurrentPosition()) - slidesOffset;
+        /*
+        *   Written out, this is the remaining horizontal distance (24 inches in ticks) multiplied
+        *   by the secant of the angle.
+        *   maxExtend = 24sec(Θ)
+        */
         maxExtend = Math.abs(MAX_FORWARD_DISTANCE / (Math.cos(ticksToRadians(angleMotor.getCurrentPosition()) + Math.abs(imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.RADIANS)))));
         speedRatio = ((maxExtend - slidesPosition) / 500);
         if(slideSensor.getState()) {
