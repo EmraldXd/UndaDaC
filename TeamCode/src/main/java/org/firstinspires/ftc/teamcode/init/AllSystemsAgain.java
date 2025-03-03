@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.action.mecanumDrive;
 import org.firstinspires.ftc.teamcode.customAction.clawRR;
 import org.firstinspires.ftc.teamcode.customAction.linearSlideRR;
 
+@Disabled
 @Autonomous
 public class AllSystemsAgain extends LinearOpMode{
 

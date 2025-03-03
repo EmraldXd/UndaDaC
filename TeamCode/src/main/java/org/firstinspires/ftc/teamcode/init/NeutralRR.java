@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.CompositeVelConstraint;
+import com.acmerobotics.roadrunner.DisplacementProfile;
+import com.acmerobotics.roadrunner.DisplacementTrajectory;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
@@ -11,7 +14,9 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.acmerobotics.roadrunner.ftc.ManualFeedforwardTuner;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -27,6 +32,7 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 import java.io.SequenceInputStream;
 import java.util.concurrent.TimeUnit;
+
 
 @Autonomous
 public class NeutralRR extends LinearOpMode{
@@ -53,36 +59,51 @@ public class NeutralRR extends LinearOpMode{
         linearSlideRR linearSlides = new linearSlideRR(hardwareMap);
         mecanumDrive mecanumDrive = new mecanumDrive();
         Actions.runBlocking(claw.initializer());
+        Actions.runBlocking(claw.close());
         mecanumDrive.init(this);
-        encoder = hardwareMap.get(DcMotor.class, "ParEncoder");
 
 
-        //This runs us to the rungs to hang our preload specimen
+        /*This runs us to the rungs to hang our preload specimen
+
+        This code is no longer used
+
         start = drive.actionBuilder(new Pose2d(11.94, 62.36, Math.toRadians(90.00)))
                 .setReversed(true)
                 .splineToConstantHeading(new Vector2d(0.00, 43.00), Math.toRadians(-90.00))
                 .build();
+        */
 
-        //This used in order to align our robot to hang the specimens
+        /*This used in order to align our robot to hang the specimens
+
+        This code is no longer used
+
         align = drive.actionBuilder(new Pose2d(0.00, 43.00, Math.toRadians(90.00)))
                 .lineToYConstantHeading(41)
                 .waitSeconds(0.5)
                 .build();
 
-        pickupFirst = drive.actionBuilder(new Pose2d(0.00, 40.00, Math.toRadians(90.00)))
-                .strafeToLinearHeading(new Vector2d(43.5, 38), Math.toRadians(-90.00),
-                    new TranslationalVelConstraint(30.0))
-                .waitSeconds(0.5)
+        */
+
+        start = drive.actionBuilder(new Pose2d(11.94, 62.36, Math.toRadians(90.00)))
+                .setReversed(true)
+                .splineTo(new Vector2d(25.73, 45.6), Math.toRadians(-20))
+                .splineTo(new Vector2d(50, 50), Math.toRadians(45),
+                        new TranslationalVelConstraint(20))
                 .build();
 
-        firstRunToBasket = drive.actionBuilder((new Pose2d(43.5, 42, Math.toRadians(-90))))
+        pickupFirst = drive.actionBuilder(new Pose2d(50, 50.00, Math.toRadians(-45)))
+                .strafeToLinearHeading(new Vector2d(50, 40), Math.toRadians(-90.00),
+                new TranslationalVelConstraint(30.0))
+                .build();
+
+        firstRunToBasket = drive.actionBuilder((new Pose2d(50, 40, Math.toRadians(-90))))
                 .setReversed(true)
-                .strafeToLinearHeading(new Vector2d(43.5, 45), Math.toRadians(-135),
+                .strafeToLinearHeading(new Vector2d(50, 50), Math.toRadians(-135),
                         new TranslationalVelConstraint(30.0))
                 .build();
 
-        pickupSecond = drive.actionBuilder(new Pose2d(46, 51, Math.toRadians(-135)))
-                .strafeToLinearHeading(new Vector2d(54, 45.5), Math.toRadians(-90),
+        pickupSecond = drive.actionBuilder(new Pose2d(50, 50, Math.toRadians(-45)))
+                .strafeToLinearHeading(new Vector2d(55, 40), Math.toRadians(-90),
                         new TranslationalVelConstraint(30.0))
                 .build();
 
@@ -98,7 +119,7 @@ public class NeutralRR extends LinearOpMode{
 
         lastRunToBasket = drive.actionBuilder(new Pose2d(-55, -33, Math.toRadians(30)))
                 .setReversed(true)
-                .splineTo(new Vector2d(48, 52), Math.toRadians(45))
+                .splineTo(new Vector2d(48, 50), Math.toRadians(45))
                 .build();
 
         clear = drive.actionBuilder(new Pose2d(48,  52, Math.toRadians(-135)))
@@ -108,9 +129,7 @@ public class NeutralRR extends LinearOpMode{
 
         waitForStart();
 
-        Actions.runBlocking(start);
-
-        lastReadPosition = encoder.getCurrentPosition();
+        /* lastReadPosition = encoder.getCurrentPosition();
         driveTime.reset();
         while (opModeIsActive()) {
             mecanumDrive.setPower(0, .75, 0);
@@ -133,18 +152,59 @@ public class NeutralRR extends LinearOpMode{
             telemetry.update();
             mecanumDrive.setPower(0, -0.75, 0);
         }
-        mecanumDrive.setPower(0, 0, 0);
+        mecanumDrive.setPower(0, 0, 0); */
 
 
         Actions.runBlocking(
                 new SequentialAction(
-                        linearSlides.specimenAngle(),
-                        claw.angle(),
-                        linearSlides.runToHighRung()
+                    new ParallelAction(
+                            start,
+                        new SequentialAction(
+                                linearSlides.angleSlidesUp(),
+                                claw.angle(),
+                                linearSlides.runToHighBasket()
+                        )
+                    ),
+                    new SequentialAction(
+                            linearSlides.home(),
+                            new ParallelAction(
+                                    new SequentialAction(
+                                            claw.angle(),
+                                            linearSlides.angleSlidesDown(),
+                                            linearSlides.collectPos()
+                                    ),
+                                    pickupFirst
+                            ),
+                            new ParallelAction(
+                                    new SequentialAction(
+                                            linearSlides.home(),
+                                            linearSlides.angleSlidesUp(),
+                                            claw.angle()
+                                    ),
+                                    firstRunToBasket
+                            ),
+                            linearSlides.runToHighBasket(),
+                            linearSlides.home(),
+                            claw.angle(),
+                            new ParallelAction(
+                                    new SequentialAction(
+                                            linearSlides.angleSlidesDown(),
+                                            linearSlides.collectPos()
+                                    ),
+                                    pickupSecond
+                            ),
+                            new ParallelAction(
+                                    new SequentialAction(
+                                            linearSlides.home(),
+                                            linearSlides.angleSlidesUp()
+                                    ),
+                                    secondRunToBasket
+                            )
+                    )
                 )
         );
 
-        driveTime.reset();
+        /*driveTime.reset();
         while(opModeIsActive() && driveTime.time() < 0.5) {
             mecanumDrive.setPower(0, 0.7, 0);
         }
@@ -262,7 +322,7 @@ public class NeutralRR extends LinearOpMode{
                         claw.angle(),
                         linearSlides.angleSlidesDown()
                 )
-        );
+        ); */
     }
 }
 
