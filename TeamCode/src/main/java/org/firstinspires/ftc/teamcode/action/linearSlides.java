@@ -63,6 +63,9 @@ public class linearSlides {
         angleMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        angleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //Set angle motor offset
         angleOffset = Math.abs(angleMotor.getCurrentPosition());
         slidesOffset = Math.abs(rightSlide.getCurrentPosition());

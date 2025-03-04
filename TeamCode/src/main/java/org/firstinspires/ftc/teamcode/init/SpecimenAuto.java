@@ -12,9 +12,11 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 //Import our used RoadRunnerActions
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.customAction.linearSlideRR;
 import org.firstinspires.ftc.teamcode.customAction.clawRR;
 
@@ -36,6 +38,7 @@ public class SpecimenAuto extends LinearOpMode{
     Action alignSecond;
     Action pushSpecimens;
     DcMotor encoder;
+    DistanceSensor distSense;
     double lastReadPosition;
     private static final ElapsedTime driveTime = new ElapsedTime();
 
@@ -45,6 +48,7 @@ public class SpecimenAuto extends LinearOpMode{
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(-11.94, 62.36, Math.toRadians(90.00)));
         clawRR claw = new clawRR(hardwareMap);
         linearSlideRR linearSlides = new linearSlideRR(hardwareMap);
+        distSense = hardwareMap.get(DistanceSensor.class, "distSense");
         Actions.runBlocking(claw.initializer());
         mecanumDrive mecanumDrive = new mecanumDrive();
         encoder = hardwareMap.get(DcMotor.class, "ParEncoder");
@@ -53,7 +57,7 @@ public class SpecimenAuto extends LinearOpMode{
         //This runs us to the rungs to hang our preload specimen
         start = drive.actionBuilder(new Pose2d(-11.94, 62.36, Math.toRadians(90.00)))
                 .setReversed(true)
-                .splineTo(new Vector2d(0.00, 42.00), Math.toRadians(-90.00))
+                .splineTo(new Vector2d(0.00, 45.00), Math.toRadians(-90.00))
                 .build();
 
         //This used in order to align our robot to hang the specimens
@@ -67,9 +71,8 @@ public class SpecimenAuto extends LinearOpMode{
                 .strafeToLinearHeading(new Vector2d(-62.5,  61), Math.toRadians(-90))
                 .build();
 
-        hangNext = drive.actionBuilder(new Pose2d(-38, 50, -90))
-                .setReversed(true)
-                .splineTo(new Vector2d(2, 44), Math.toRadians(-90))
+        hangNext = drive.actionBuilder(new Pose2d(-57.5, 50, -90))
+                .strafeToLinearHeading(new Vector2d(2, 44), Math.toRadians(-90))
                 .build();
 
         alignNext = drive.actionBuilder(new Pose2d(2.00, 44.00, Math.toRadians(90.00)))
@@ -97,16 +100,13 @@ public class SpecimenAuto extends LinearOpMode{
                 .build();
 
         pushSpecimens = drive.actionBuilder(new Pose2d(0, 41, Math.toRadians(90)))
+                .waitSeconds(.7)
                 .splineTo(new Vector2d(-36.5, 24), Math.toRadians(-90))
                 .splineToConstantHeading(new Vector2d(-48, 15), Math.toRadians(90))
                 .strafeTo(new Vector2d(-48, 55))
                 .strafeTo(new Vector2d(-48,15))
                 .strafeTo(new Vector2d(-57.5, 15))
                 .strafeTo(new Vector2d(-57.5, 55))
-                .strafeTo(new Vector2d(-57.5,15))
-                .strafeTo(new Vector2d(-62.5, 15))
-                .strafeTo(new Vector2d(-62.5,55))
-                .strafeTo(new Vector2d(-62.5,40))
                 .build();
 
 
@@ -114,9 +114,54 @@ public class SpecimenAuto extends LinearOpMode{
 
         waitForStart();
 
-        Actions.runBlocking(start);
+        Actions.runBlocking(
+                new SequentialAction(
+                        new ParallelAction(
+                                start,
+                                linearSlides.angleSlidesUp()
+                        ),
+                        claw.angle(),
+                        linearSlides.runToHighRung()
+                )
+        );
 
-        lastReadPosition = encoder.getCurrentPosition();
+        while(distSense.getDistance(DistanceUnit.CM) >= 12 && opModeIsActive()) {
+            mecanumDrive.setPower(0, .75, 0);
+        }
+
+        mecanumDrive.setPower(0, 0, 0);
+
+        Actions.runBlocking(
+                new SequentialAction(
+                        new ParallelAction(
+                             new SequentialAction(
+                                        linearSlides.home(),
+                                        claw.angle()
+                             ),
+                                pushSpecimens
+                        )
+                )
+        );
+
+        while(distSense.getDistance(DistanceUnit.CM) >= 7.5 && opModeIsActive()) {
+            mecanumDrive.setPower(0, 1, 0);
+        }
+
+        while(distSense.getDistance(DistanceUnit.CM) <= 7.5 && opModeIsActive()) {
+            mecanumDrive.setPower(0, 1, 0);
+        }
+
+        mecanumDrive.setPower(0, 0, 0);
+
+        Actions.runBlocking(
+                new SequentialAction(
+                        moveFromWall,
+                        hangNext
+                )
+        );
+
+
+        /*lastReadPosition = encoder.getCurrentPosition();
         driveTime.reset();
         while (opModeIsActive()) {
             mecanumDrive.setPower(0, .75, 0);

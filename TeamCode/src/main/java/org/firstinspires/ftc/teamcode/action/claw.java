@@ -44,7 +44,7 @@ public class claw {
         if(up) {
             clawJoint.setPosition(0.0);
         } else {
-            clawAngle.setPosition(.85);
+            clawAngle.setPosition(.3);
         }
         claw.setPosition(0);
     }
