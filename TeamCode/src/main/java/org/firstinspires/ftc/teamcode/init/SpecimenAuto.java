@@ -80,7 +80,7 @@ public class SpecimenAuto extends LinearOpMode{
                 .waitSeconds(0.5)
                 .build();
 
-        moveFromWall = drive.actionBuilder(new Pose2d(-40, 60, Math.toRadians(-90)))
+        moveFromWall = drive.actionBuilder(new Pose2d(-57.5, 55, Math.toRadians(-90)))
                 .lineToYConstantHeading(50)
                 .build();
 
@@ -147,10 +147,6 @@ public class SpecimenAuto extends LinearOpMode{
             mecanumDrive.setPower(0, 1, 0);
         }
 
-        while(distSense.getDistance(DistanceUnit.CM) <= 7.5 && opModeIsActive()) {
-            mecanumDrive.setPower(0, 1, 0);
-        }
-
         mecanumDrive.setPower(0, 0, 0);
 
         Actions.runBlocking(
@@ -159,6 +155,12 @@ public class SpecimenAuto extends LinearOpMode{
                         hangNext
                 )
         );
+
+        while(distSense.getDistance(DistanceUnit.CM) >= 12 && opModeIsActive()) {
+            mecanumDrive.setPower(0, .75, 0);
+        }
+
+        mecanumDrive.setPower(0, 0, 0);
 
 
         /*lastReadPosition = encoder.getCurrentPosition();

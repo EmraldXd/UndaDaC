@@ -162,47 +162,120 @@ public class NeutralRR extends LinearOpMode{
                         new SequentialAction(
                                 linearSlides.angleSlidesUp(),
                                 claw.angle(),
-                                linearSlides.runToHighBasket()
+                                linearSlides.runToHighBasket(),
+                                claw.angle()
                         )
-                    ),
-                    new SequentialAction(
-                            linearSlides.home(),
-                            new ParallelAction(
-                                    new SequentialAction(
-                                            claw.angle(),
-                                            linearSlides.angleSlidesDown(),
-                                            linearSlides.collectPos()
-                                    ),
-                                    pickupFirst
-                            ),
-                            new ParallelAction(
-                                    new SequentialAction(
-                                            linearSlides.home(),
-                                            linearSlides.angleSlidesUp(),
-                                            claw.angle()
-                                    ),
-                                    firstRunToBasket
-                            ),
-                            linearSlides.runToHighBasket(),
-                            linearSlides.home(),
-                            claw.angle(),
-                            new ParallelAction(
-                                    new SequentialAction(
-                                            linearSlides.angleSlidesDown(),
-                                            linearSlides.collectPos()
-                                    ),
-                                    pickupSecond
-                            ),
-                            new ParallelAction(
-                                    new SequentialAction(
-                                            linearSlides.home(),
-                                            linearSlides.angleSlidesUp()
-                                    ),
-                                    secondRunToBasket
-                            )
                     )
                 )
         );
+
+        sleep(750);
+
+        Actions.runBlocking(claw.open());
+
+        sleep(750);
+
+        Actions.runBlocking(claw.angle());
+
+        sleep(500);
+
+        Actions.runBlocking(
+                new SequentialAction(
+                        linearSlides.home(),
+                        new ParallelAction(
+                                new SequentialAction(
+                                        claw.angle(),
+                                        linearSlides.angleSlidesDown(),
+                                        linearSlides.collectPos()
+                                ),
+                                pickupFirst
+                        ),
+                        claw.angle(),
+                        claw.open()
+                )
+        );
+
+        sleep(750);
+
+        Actions.runBlocking(claw.close());
+
+        sleep(750);
+
+        Actions.runBlocking(
+                new SequentialAction(
+                        claw.angle(),
+                        new ParallelAction(
+                                new SequentialAction(
+                                        linearSlides.home(),
+                                        linearSlides.angleSlidesUp(),
+                                        claw.angle()
+                                ),
+                                firstRunToBasket
+                        ),
+                        linearSlides.runToHighBasket(),
+                        claw.angle()
+                )
+        );
+
+        sleep(750);
+
+        Actions.runBlocking(claw.open());
+
+        sleep(750);
+
+        Actions.runBlocking(claw.angle());
+
+        sleep(500);
+
+        Actions.runBlocking(
+                new SequentialAction(
+                        linearSlides.home(),
+                        claw.angle(),
+                        new ParallelAction(
+                                new SequentialAction(
+                                        linearSlides.angleSlidesDown(),
+                                        linearSlides.collectPos()
+                                ),
+                                pickupSecond
+                        ),
+                        claw.angle()
+                )
+        );
+
+        sleep(750);
+
+        Actions.runBlocking(claw.close());
+
+        sleep(750);
+
+        Actions.runBlocking(claw.angle());
+
+        sleep(500);
+
+        Actions.runBlocking(
+                new ParallelAction(
+                        new SequentialAction(
+                                linearSlides.home(),
+                                linearSlides.angleSlidesUp()
+                        ),
+                        secondRunToBasket
+                )
+        );
+
+        Actions.runBlocking(claw.angle());
+
+        sleep(750);
+
+        Actions.runBlocking(claw.open());
+
+        sleep(750);
+
+        Actions.runBlocking(claw.angle());
+
+        sleep(500);
+
+        Actions.runBlocking(linearSlides.home());
+
 
         /*driveTime.reset();
         while(opModeIsActive() && driveTime.time() < 0.5) {
