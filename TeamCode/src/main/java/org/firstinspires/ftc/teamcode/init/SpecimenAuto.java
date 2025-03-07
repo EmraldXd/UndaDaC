@@ -40,6 +40,7 @@ public class SpecimenAuto extends LinearOpMode{
     DcMotor encoder;
     DistanceSensor distSense;
     double lastReadPosition;
+    boolean closeNuff;
     private static final ElapsedTime driveTime = new ElapsedTime();
 
 
@@ -72,7 +73,7 @@ public class SpecimenAuto extends LinearOpMode{
                 .build();
 
         hangNext = drive.actionBuilder(new Pose2d(-57.5, 50, -90))
-                .strafeToLinearHeading(new Vector2d(2, 44), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(2, 44), Math.toRadians(90))
                 .build();
 
         alignNext = drive.actionBuilder(new Pose2d(2.00, 44.00, Math.toRadians(90.00)))
@@ -100,7 +101,7 @@ public class SpecimenAuto extends LinearOpMode{
                 .build();
 
         pushSpecimens = drive.actionBuilder(new Pose2d(0, 41, Math.toRadians(90)))
-                .waitSeconds(.7)
+                .waitSeconds(.35)
                 .splineTo(new Vector2d(-36.5, 24), Math.toRadians(-90))
                 .splineToConstantHeading(new Vector2d(-48, 15), Math.toRadians(90))
                 .strafeTo(new Vector2d(-48, 55))
@@ -126,10 +127,15 @@ public class SpecimenAuto extends LinearOpMode{
         );
 
         while(distSense.getDistance(DistanceUnit.CM) >= 12 && opModeIsActive()) {
-            mecanumDrive.setPower(0, .75, 0);
+            mecanumDrive.setPower(0, .5, 0);
+            if(distSense.getDistance(DistanceUnit.CM) < 12) {
+                break;
+            }
         }
 
         mecanumDrive.setPower(0, 0, 0);
+
+        sleep(250);
 
         Actions.runBlocking(
                 new SequentialAction(
@@ -145,22 +151,38 @@ public class SpecimenAuto extends LinearOpMode{
 
         while(distSense.getDistance(DistanceUnit.CM) >= 7.5 && opModeIsActive()) {
             mecanumDrive.setPower(0, 1, 0);
+            if(distSense.getDistance(DistanceUnit.CM) < 7.5) {
+                break;
+            }
+            telemetry.addData("distance: ", distSense.getDistance(DistanceUnit.CM));
         }
 
         mecanumDrive.setPower(0, 0, 0);
 
         Actions.runBlocking(
                 new SequentialAction(
+                        linearSlides.take(),
                         moveFromWall,
-                        hangNext
+                        new ParallelAction(
+                                linearSlides.home(),
+                                hangNext
+                        ),
+                        linearSlides.runToHighRung()
                 )
         );
 
-        while(distSense.getDistance(DistanceUnit.CM) >= 12 && opModeIsActive()) {
+        while(distSense.getDistance(DistanceUnit.CM) >= 15 && opModeIsActive()) {
             mecanumDrive.setPower(0, .75, 0);
+            if(distSense.getDistance(DistanceUnit.CM) < 15) {
+                break;
+            }
         }
 
         mecanumDrive.setPower(0, 0, 0);
+
+        sleep(250);
+
+        Actions.runBlocking(linearSlides.home());
 
 
         /*lastReadPosition = encoder.getCurrentPosition();

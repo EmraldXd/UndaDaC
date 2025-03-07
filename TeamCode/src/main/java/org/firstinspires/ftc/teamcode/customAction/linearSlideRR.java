@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
@@ -13,23 +14,28 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 public class linearSlideRR {
     DcMotor rightSlide;
     DcMotor leftSlide;
-    DcMotor angleMotor;
+    DcMotor angleMotorA;
+    DcMotor angleMotorB;
     public double runPosition;
     public double runPower;
 
 
     public linearSlideRR(HardwareMap hardwareMap) {
-        angleMotor = hardwareMap.get(DcMotor.class, "AngleMotor");
+        angleMotorA = hardwareMap.get(DcMotor.class, "AngleMotorA");
+        angleMotorB = hardwareMap.get(DcMotor.class, "ParEncoder");
         rightSlide = hardwareMap.get(DcMotor.class, "RightSlide");
         leftSlide = hardwareMap.get(DcMotor.class, "LeftSlide");
-        angleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        angleMotorA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        angleMotorB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        angleMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        angleMotorA.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        angleMotorB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        angleMotorB.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     /** This angles the slides upward to score samples or specimens */
@@ -37,12 +43,14 @@ public class linearSlideRR {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
 
-            if(angleMotor.getCurrentPosition() >= 3750) {
-                angleMotor.setPower(0);
+            if(angleMotorA.getCurrentPosition() >= 2400) {
+                angleMotorA.setPower(0);
+                angleMotorB.setPower(0);
                 return false;
             }
 
-            angleMotor.setPower(1);
+            angleMotorA.setPower(.75);
+            angleMotorB.setPower(.75);
             return true;
         }
     }
@@ -51,12 +59,14 @@ public class linearSlideRR {
     public class AngleSlidesDown implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if(angleMotor.getCurrentPosition() <= 0) {
-                angleMotor.setPower(0);
+            if(angleMotorA.getCurrentPosition() <= 0) {
+                angleMotorA.setPower(0);
+                angleMotorB.setPower(0);
                 return false;
             }
 
-            angleMotor.setPower(-1);
+            angleMotorB.setPower(-1);
+            angleMotorA.setPower(-1);
             return true;
         }
     }
@@ -66,7 +76,7 @@ public class linearSlideRR {
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             telemetryPacket.put("a_rightPos", rightSlide.getCurrentPosition());
 
-            if(rightSlide.getCurrentPosition() >= 2695) {
+            if(rightSlide.getCurrentPosition() >= 2675) {
                 rightSlide.setPower(0);
                 leftSlide.setPower(0);
                 return false;
@@ -153,7 +163,7 @@ public class linearSlideRR {
      *
      * This code is used to get the linear slides to the angle they need for our main claw to hang
      * specimens on the high rung.
-     */
+
     public class AngleSlidesSpecimen implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
@@ -167,6 +177,8 @@ public class linearSlideRR {
             return true;
         }
     }
+
+     */
 
 
 
@@ -199,5 +211,5 @@ public class linearSlideRR {
         return new takeSpecimen();
     }
 
-    public Action specimenAngle(){return new AngleSlidesSpecimen();}
+    //public Action specimenAngle(){return new AngleSlidesSpecimen();}
 }

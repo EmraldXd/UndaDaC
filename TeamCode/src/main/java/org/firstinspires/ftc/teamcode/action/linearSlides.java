@@ -23,7 +23,8 @@ public class linearSlides {
     //Declare null
     DcMotor rightSlide;
     DcMotor leftSlide;
-    DcMotor angleMotor;
+    DcMotor angleMotorA;
+    DcMotor angleMotorB;
     Telemetry telemetry;
     DigitalChannel touchSensor;
     DigitalChannel slideSensor;
@@ -50,25 +51,37 @@ public class linearSlides {
     public void init(@NonNull OpMode opMode){
         HardwareMap hardwareMap = opMode.hardwareMap;
         telemetry = opMode.telemetry;
+
         //Initialize motors
-        angleMotor = hardwareMap.get(DcMotor.class, "AngleMotor");
+        angleMotorA = hardwareMap.get(DcMotor.class, "AngleMotorA");
+        angleMotorB = hardwareMap.get(DcMotor.class, "ParEncoder");
         rightSlide = hardwareMap.get(DcMotor.class, "RightSlide");
         leftSlide = hardwareMap.get(DcMotor.class, "LeftSlide");
+
         //Initialize sensors
         touchSensor = hardwareMap.get(DigitalChannel.class, "Touch Sensor");
         slideSensor = hardwareMap.get(DigitalChannel.class, "Slide Sensor");
+
         //Set Motor Direction
         rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        angleMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        angleMotorA.setDirection(DcMotorSimple.Direction.REVERSE);
+        //We do not set angleMotorB to reverse because it has to move the opposite direction from angleMotorA
+
+        //Set Motor Behaviors
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //Stop the motors to reset them to 0
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        angleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        angleMotorA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //We do not reset AngleMotorB because it does not need to return data
+
         //Set angle motor offset
-        angleOffset = Math.abs(angleMotor.getCurrentPosition());
+        angleOffset = Math.abs(angleMotorA.getCurrentPosition());
         slidesOffset = Math.abs(rightSlide.getCurrentPosition());
+
         //Initialize IMU for the pitch of the robot
         imu = hardwareMap.get(IMU.class, "imu");
     }
@@ -76,7 +89,8 @@ public class linearSlides {
     public void setSlides() {
         rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        angleMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        angleMotorA.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        angleMotorB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         isStopped = false;
         request = false;
     }
@@ -90,21 +104,18 @@ public class linearSlides {
         double y;
         //Set booleans to double values to work the linear slides
         y = (up ? -1 : 0) + (down ? 1 : 0);
-        angleMotor.setPower(y);
-        if(down || up) {
-            angleMotor.setPower(y);
-            downLastPressed = !downLastPressed;
-        }
+        angleMotorA.setPower(y);
+        angleMotorB.setPower(y);
     }
 
     public void slidePower(double x) {
         slidesPosition = Math.abs(rightSlide.getCurrentPosition()) - slidesOffset;
         /*
         *   Written out, this is the remaining horizontal distance (24 inches in ticks) multiplied
-        *   by the secant of the angle.
+        *   by the secant of the angle made by the robot pitch and slide angle.
         *   maxExtend = 24sec(Θ)
         */
-        maxExtend = Math.abs(MAX_FORWARD_DISTANCE / (Math.cos(ticksToRadians(angleMotor.getCurrentPosition()) + Math.abs(imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.RADIANS)))));
+        maxExtend = Math.abs(MAX_FORWARD_DISTANCE / (Math.cos(ticksToRadians(angleMotorA.getCurrentPosition()) + Math.abs(imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.RADIANS)))));
         speedRatio = ((maxExtend - slidesPosition) / 500);
         if(slideSensor.getState()) {
             if (slidesPosition - maxExtend < 0 || x > 0) {
@@ -141,21 +152,30 @@ public class linearSlides {
      */
     public double ticksToRadians(double rotation) {
         if(!touchSensor.getState() && !isStopped){
-            angleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            angleMotorA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            angleMotorB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             isStopped = true;
         } else if(!touchSensor.getState() && isStopped) {
-            angleMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            angleMotorA.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            angleMotorB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         } else if(isStopped) {
             isStopped = false;
         }
-        currentAngle = Math.toRadians(90) * (rotation / 4000);
+        currentAngle = Math.toRadians(90) * (rotation / 2100);
         return Math.abs(currentAngle);
     }
 
     public boolean liftTime() {
-        return Math.abs(rightSlide.getCurrentPosition()) < 1750;
+        return Math.abs(rightSlide.getCurrentPosition()) < 1800;
     }
 
+    /**
+     * This code is completely unused in newer designs. Previously it was made to allow the linear
+     * slides to autonomously go the specified angle to hang specimens with a single button press.
+     * Since we added the specimen claw, this chunk of code remains obsolete.
+     * @param pressed is when the button is pressed to begin angling.
+     * @param cancel is when literally ANY OTHER button to move the angle motor is pressed.
+     */
     public void goToSpecimen(boolean pressed, boolean cancel){
         if(pressed) {
             request = true;
@@ -163,16 +183,16 @@ public class linearSlides {
             request = false;
         }
         if(request) {
-            if (ticksToRadians(angleMotor.getCurrentPosition()) < Math.toRadians(50)) {
-                angleMotor.setPower(-1);
+            if (ticksToRadians(angleMotorA.getCurrentPosition()) < Math.toRadians(50)) {
+                angleMotorA.setPower(-1);
             } else if(lastPower < currentPower || lastPower > currentPower) {
                 request = false;
             } else {
-                angleMotor.setPower(1);
+                angleMotorA.setPower(1);
             }
         }
         lastPower = currentPower;
-        currentPower = angleMotor.getPower();
+        currentPower = angleMotorA.getPower();
     }
 
     /**
@@ -182,10 +202,10 @@ public class linearSlides {
      */
 
     public String moveUpOrDown() {
-        if(ticksToRadians(angleMotor.getCurrentPosition()) >=  Math.toRadians(40) && ticksToRadians(angleMotor.getCurrentPosition()) <= Math.toRadians(50)) {
-            if(angleMotor.getPower() > 0) {
+        if(ticksToRadians(angleMotorA.getCurrentPosition()) >=  Math.toRadians(60) && ticksToRadians(angleMotorA.getCurrentPosition()) <= Math.toRadians(70)) {
+            if(angleMotorA.getPower() > 0) {
                 return "Lower";
-            } else if(angleMotor.getPower() < 0) {
+            } else if(angleMotorA.getPower() < 0) {
                 return "Raise";
             } else {
                 return "Nuhuh";
@@ -196,12 +216,15 @@ public class linearSlides {
     }
 
     public double current() {
-        return ticksToRadians(angleMotor.getCurrentPosition());
+        return ticksToRadians(angleMotorA.getCurrentPosition());
     }
 
     public void slideCheck() {
-        if(angleMotor.getMode() == DcMotor.RunMode.STOP_AND_RESET_ENCODER) {
-            angleMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        if(angleMotorA.getMode() == DcMotor.RunMode.STOP_AND_RESET_ENCODER) {
+            angleMotorA.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+        if(angleMotorB.getMode() == DcMotor.RunMode.STOP_AND_RESET_ENCODER) {
+            angleMotorB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
     }
 
@@ -225,9 +248,9 @@ public class linearSlides {
         telemetry.addData("Right Motor Power: ", df.format(rightSlide.getPower()));
         telemetry.addData("Right Motor Position: ", df.format(slidesPosition - slidesOffset));
         telemetry.addData("Max distance: ", maxExtend);
-        telemetry.addData("Angle Motor Power: ", df.format(angleMotor.getPower()));
-        telemetry.addData("Angle Motor Position: ", df.format(Math.toDegrees(ticksToRadians(angleMotor.getCurrentPosition()))) + " Degrees");
-        telemetry.addData("angle motor position: ", angleMotor.getCurrentPosition());
-        telemetry.addData("Position: ", df.format(angleMotor.getCurrentPosition()));
+        telemetry.addData("Angle Motor Power: ", df.format(angleMotorA.getPower()));
+        telemetry.addData("Angle Motor Position: ", df.format(Math.toDegrees(ticksToRadians(angleMotorA.getCurrentPosition()))) + " Degrees");
+        telemetry.addData("angle motor position: ", angleMotorA.getCurrentPosition());
+        telemetry.addData("Position: ", df.format(angleMotorA.getCurrentPosition()));
     }
 }

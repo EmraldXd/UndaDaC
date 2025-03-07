@@ -132,7 +132,7 @@ public class AllSystemsAgain extends LinearOpMode{
 
         Actions.runBlocking(
                 new SequentialAction(
-                        linearSlides.specimenAngle(),
+                        //linearSlides.specimenAngle(),
                         claw.angle(),
                         linearSlides.runToHighRung()
                 )

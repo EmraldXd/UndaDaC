@@ -78,7 +78,7 @@ public class claw {
             isClosed = true;
             delayClaw.reset();
         } else if (isPressed && delayClaw.time() > DELAY && isClosed) {
-            claw.setPosition(0.3);
+            claw.setPosition(0.4);
             isClosed = false;
             delayClaw.reset();
         }

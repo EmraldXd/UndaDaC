@@ -140,7 +140,7 @@ public class SpecimenAutoLines extends LinearOpMode{
 
         Actions.runBlocking(
                 new SequentialAction(
-                        linearSlides.specimenAngle(),
+                        //linearSlides.specimenAngle(),
                         claw.angle(),
                         linearSlides.runToHighRung()
                 )
