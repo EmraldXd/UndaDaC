@@ -87,7 +87,7 @@ public class NeutralRR extends LinearOpMode{
         start = drive.actionBuilder(new Pose2d(11.94, 62.36, Math.toRadians(90.00)))
                 .setReversed(true)
                 .splineTo(new Vector2d(25.73, 45.6), Math.toRadians(-20))
-                .splineTo(new Vector2d(50, 50), Math.toRadians(45),
+                .splineTo(new Vector2d(48, 48), Math.toRadians(45),
                         new TranslationalVelConstraint(20))
                 .build();
 
@@ -98,16 +98,16 @@ public class NeutralRR extends LinearOpMode{
 
         firstRunToBasket = drive.actionBuilder((new Pose2d(50, 40, Math.toRadians(-90))))
                 .setReversed(true)
-                .strafeToLinearHeading(new Vector2d(50, 50), Math.toRadians(-135),
+                .strafeToLinearHeading(new Vector2d(48, 48), Math.toRadians(-135),
                         new TranslationalVelConstraint(30.0))
                 .build();
 
-        pickupSecond = drive.actionBuilder(new Pose2d(50, 50, Math.toRadians(-45)))
-                .strafeToLinearHeading(new Vector2d(55, 40), Math.toRadians(-90),
+        pickupSecond = drive.actionBuilder(new Pose2d(52, 50, Math.toRadians(-45)))
+                .strafeToLinearHeading(new Vector2d(55, 41), Math.toRadians(-80),
                         new TranslationalVelConstraint(30.0))
                 .build();
 
-        secondRunToBasket = drive.actionBuilder(new Pose2d(54, 45.5, Math.toRadians(-90)))
+        secondRunToBasket = drive.actionBuilder(new Pose2d(54, 45.5, Math.toRadians(-80)))
                 .setReversed(true)
                 .strafeToLinearHeading(new Vector2d(45, 48), Math.toRadians(-135),
                         new TranslationalVelConstraint(30.0))
@@ -169,11 +169,11 @@ public class NeutralRR extends LinearOpMode{
                 )
         );
 
-        sleep(750);
+        sleep(500);
 
         Actions.runBlocking(claw.open());
 
-        sleep(750);
+        sleep(500);
 
         Actions.runBlocking(claw.angle());
 
@@ -195,11 +195,11 @@ public class NeutralRR extends LinearOpMode{
                 )
         );
 
-        sleep(750);
+        sleep(500);
 
         Actions.runBlocking(claw.close());
 
-        sleep(750);
+        sleep(500);
 
         Actions.runBlocking(
                 new SequentialAction(
@@ -217,11 +217,11 @@ public class NeutralRR extends LinearOpMode{
                 )
         );
 
-        sleep(750);
+        sleep(500);
 
         Actions.runBlocking(claw.open());
 
-        sleep(750);
+        sleep(500);
 
         Actions.runBlocking(claw.angle());
 
@@ -242,11 +242,11 @@ public class NeutralRR extends LinearOpMode{
                 )
         );
 
-        sleep(750);
+        sleep(500);
 
         Actions.runBlocking(claw.close());
 
-        sleep(750);
+        sleep(500);
 
         Actions.runBlocking(claw.angle());
 
@@ -256,7 +256,9 @@ public class NeutralRR extends LinearOpMode{
                 new ParallelAction(
                         new SequentialAction(
                                 linearSlides.home(),
-                                linearSlides.angleSlidesUp()
+                                linearSlides.angleSlidesUp(),
+                                claw.angle(),
+                                linearSlides.runToHighBasket()
                         ),
                         secondRunToBasket
                 )
@@ -264,11 +266,11 @@ public class NeutralRR extends LinearOpMode{
 
         Actions.runBlocking(claw.angle());
 
-        sleep(750);
+        sleep(500);
 
         Actions.runBlocking(claw.open());
 
-        sleep(750);
+        sleep(500);
 
         Actions.runBlocking(claw.angle());
 

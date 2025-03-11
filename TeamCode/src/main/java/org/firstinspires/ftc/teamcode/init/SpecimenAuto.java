@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.init;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
@@ -37,6 +39,7 @@ public class SpecimenAuto extends LinearOpMode{
     Action hangSecond;
     Action alignSecond;
     Action pushSpecimens;
+    Action park;
     DcMotor encoder;
     DistanceSensor distSense;
     double lastReadPosition;
@@ -73,7 +76,7 @@ public class SpecimenAuto extends LinearOpMode{
                 .build();
 
         hangNext = drive.actionBuilder(new Pose2d(-57.5, 50, -90))
-                .strafeToLinearHeading(new Vector2d(2, 44), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(2, 46), Math.toRadians(90))
                 .build();
 
         alignNext = drive.actionBuilder(new Pose2d(2.00, 44.00, Math.toRadians(90.00)))
@@ -85,14 +88,14 @@ public class SpecimenAuto extends LinearOpMode{
                 .lineToYConstantHeading(50)
                 .build();
 
-        pickupSecond = drive.actionBuilder(new Pose2d(2.00, 40.50, Math.toRadians(90.00)))
-                .splineTo(new Vector2d(-40, 42), Math.toRadians(-90))
-                .lineToYConstantHeading(63)
+        pickupSecond = drive.actionBuilder(new Pose2d(2.00, 44, Math.toRadians(90.00)))
+                .waitSeconds(.33)
+                .strafeToLinearHeading(new Vector2d(-45, 42), Math.toRadians(-90))
                 .build();
 
-        hangSecond = drive.actionBuilder(new Pose2d(-40, 63, Math.toRadians(-90)))
+        hangSecond = drive.actionBuilder(new Pose2d(-57.5, 55, Math.toRadians(-90)))
                 .setReversed(true)
-                .splineTo(new Vector2d(4, 44), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(4, 46), Math.toRadians(90))
                 .build();
 
         alignSecond = drive.actionBuilder(new Pose2d(2.00, 44.00, Math.toRadians(90.00)))
@@ -101,13 +104,18 @@ public class SpecimenAuto extends LinearOpMode{
                 .build();
 
         pushSpecimens = drive.actionBuilder(new Pose2d(0, 41, Math.toRadians(90)))
-                .waitSeconds(.35)
+                .waitSeconds(.33)
                 .splineTo(new Vector2d(-36.5, 24), Math.toRadians(-90))
                 .splineToConstantHeading(new Vector2d(-48, 15), Math.toRadians(90))
                 .strafeTo(new Vector2d(-48, 55))
                 .strafeTo(new Vector2d(-48,15))
                 .strafeTo(new Vector2d(-57.5, 15))
                 .strafeTo(new Vector2d(-57.5, 55))
+                .build();
+
+        park = drive.actionBuilder(new Pose2d(4, 46, Math.toRadians(90)))
+                .waitSeconds(.33)
+                .strafeTo(new Vector2d(-55, 55))
                 .build();
 
 
@@ -127,15 +135,13 @@ public class SpecimenAuto extends LinearOpMode{
         );
 
         while(distSense.getDistance(DistanceUnit.CM) >= 12 && opModeIsActive()) {
-            mecanumDrive.setPower(0, .5, 0);
+            mecanumDrive.setPower(0, .75, 0);
             if(distSense.getDistance(DistanceUnit.CM) < 12) {
                 break;
             }
         }
 
         mecanumDrive.setPower(0, 0, 0);
-
-        sleep(250);
 
         Actions.runBlocking(
                 new SequentialAction(
@@ -149,9 +155,10 @@ public class SpecimenAuto extends LinearOpMode{
                 )
         );
 
+        driveTime.reset();
         while(distSense.getDistance(DistanceUnit.CM) >= 7.5 && opModeIsActive()) {
             mecanumDrive.setPower(0, 1, 0);
-            if(distSense.getDistance(DistanceUnit.CM) < 7.5) {
+            if(distSense.getDistance(DistanceUnit.CM) < 7.5 || driveTime.time() > 1.00) {
                 break;
             }
             telemetry.addData("distance: ", distSense.getDistance(DistanceUnit.CM));
@@ -164,26 +171,62 @@ public class SpecimenAuto extends LinearOpMode{
                         linearSlides.take(),
                         moveFromWall,
                         new ParallelAction(
-                                linearSlides.home(),
+                                claw.angle(),
+                                linearSlides.runToHighRung(),
                                 hangNext
-                        ),
-                        linearSlides.runToHighRung()
+                        )
                 )
         );
 
-        while(distSense.getDistance(DistanceUnit.CM) >= 15 && opModeIsActive()) {
+        while(distSense.getDistance(DistanceUnit.CM) >= 17.5 && opModeIsActive()) {
             mecanumDrive.setPower(0, .75, 0);
-            if(distSense.getDistance(DistanceUnit.CM) < 15) {
+            if(distSense.getDistance(DistanceUnit.CM) < 17.5) {
                 break;
             }
         }
 
         mecanumDrive.setPower(0, 0, 0);
 
-        sleep(250);
+        Actions.runBlocking(
+                new ParallelAction(
+                        linearSlides.home(),
+                        pickupSecond
+                )
+        );
 
-        Actions.runBlocking(linearSlides.home());
+        driveTime.reset();
+        while(distSense.getDistance(DistanceUnit.CM) >= 7.5 && opModeIsActive()) {
+            mecanumDrive.setPower(0, 1, 0);
+            if(distSense.getDistance(DistanceUnit.CM) < 7.5 || driveTime.time() > 1.00) {
+                break;
+            }
+            telemetry.addData("distance: ", distSense.getDistance(DistanceUnit.CM));
+        }
 
+        Actions.runBlocking(
+                new SequentialAction(
+                        linearSlides.take(),
+                        moveFromWall,
+                        new ParallelAction(
+                                hangSecond,
+                                linearSlides.runToHighRung()
+                        )
+                )
+        );
+
+        while(distSense.getDistance(DistanceUnit.CM) >= 17.5 && opModeIsActive()) {
+            mecanumDrive.setPower(0, .75, 0);
+            if(distSense.getDistance(DistanceUnit.CM) < 17.5) {
+                break;
+            }
+        }
+
+        Actions.runBlocking(
+                new ParallelAction(
+                        linearSlides.home(),
+                        park
+                )
+        );
 
         /*lastReadPosition = encoder.getCurrentPosition();
         driveTime.reset();
@@ -254,3 +297,5 @@ public class SpecimenAuto extends LinearOpMode{
             );*/
     }
 }
+
+

@@ -66,7 +66,7 @@ public class linearSlides {
         rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         angleMotorA.setDirection(DcMotorSimple.Direction.REVERSE);
-        //We do not set angleMotorB to reverse because it has to move the opposite direction from angleMotorA
+        angleMotorB.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Set Motor Behaviors
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -226,6 +226,12 @@ public class linearSlides {
         if(angleMotorB.getMode() == DcMotor.RunMode.STOP_AND_RESET_ENCODER) {
             angleMotorB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
+        if(rightSlide.getMode() == DcMotor.RunMode.STOP_AND_RESET_ENCODER) {
+            rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+        if(leftSlide.getMode() == DcMotor.RunMode.STOP_AND_RESET_ENCODER) {
+            leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
     }
 
     /**
@@ -243,6 +249,16 @@ public class linearSlides {
             return false;
         }
     } */
+
+    public void resetSlides(boolean pressed) {
+        if(pressed) {
+            rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        } else {
+            rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+    }
 
     public void telemetryOutput() {
         telemetry.addData("Right Motor Power: ", df.format(rightSlide.getPower()));

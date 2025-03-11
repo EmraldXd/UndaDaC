@@ -35,7 +35,7 @@ public class linearSlideRR {
         angleMotorB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        angleMotorB.setDirection(DcMotorSimple.Direction.REVERSE);
+        //angleMotorB.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     /** This angles the slides upward to score samples or specimens */
@@ -43,7 +43,7 @@ public class linearSlideRR {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
 
-            if(angleMotorA.getCurrentPosition() >= 2400) {
+            if(angleMotorA.getCurrentPosition() >= 2980) {
                 angleMotorA.setPower(0);
                 angleMotorB.setPower(0);
                 return false;
