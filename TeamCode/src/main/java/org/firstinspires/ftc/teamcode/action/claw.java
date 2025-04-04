@@ -19,6 +19,7 @@ public class claw {
     private static final ElapsedTime delayToggle = new ElapsedTime();
     private static final ElapsedTime delayClaw = new ElapsedTime();
     private static final ElapsedTime jointDelay = new ElapsedTime();
+    private Servo eject;
     private Servo claw;
     private Servo clawJoint; //used to be ClawJointA
     private Servo clawJointB;
@@ -36,10 +37,12 @@ public class claw {
         clawJoint = hardwareMap.get(Servo.class, "Joint"); //used to be known as Claw Joint A
         //clawJointB = hardwareMap.get(Servo.class, "Joint B");
         clawAngle = hardwareMap.get(Servo.class, "Angler");
+        eject = hardwareMap.get(Servo.class, "Eject");
         isClosed = false;
         isTurned = false;
         clawToggle = false;
         //Turn Servos on
+        eject.setPosition(0);
         clawAngle.setPosition(0);
         if(up) {
             clawJoint.setPosition(0.0);
@@ -119,6 +122,14 @@ public class claw {
             up = false;
         } else if (move.equals("Lower")) {
             up = true;
+        }
+    }
+
+    public void ejection(boolean pressed) {
+        if(pressed) {
+            eject.setPosition(/*outer position*/);
+        } else {
+            eject.setPosision(0);
         }
     }
 
