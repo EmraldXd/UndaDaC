@@ -64,6 +64,7 @@ public class teleOp extends OpMode {
             claw.showTelemetry();
             claw.lift(linearSlides.liftTime());
             claw.moveArm(linearSlides.moveUpOrDown(), gamepad2.back);
+            claw.ejection(gamepad2.right_trigger.get() > 0.5);
             /*Controls for Intake
             roller.moveRoller(gamepad2.a);
             roller.intake(gamepad2.right_bumper, gamepad2.left_bumper);
@@ -93,6 +94,7 @@ public class teleOp extends OpMode {
             claw.showTelemetry();
             claw.lift(linearSlides.liftTime());
             claw.moveArm(linearSlides.moveUpOrDown(), gamepad1.back);
+            claw.ejection(gamepad1.right_trigger.get() > 0.5);
             /*Controls for Intake
             roller.moveRoller(gamepad2.a);
             roller.intake(gamepad2.right_bumper, gamepad2.left_bumper);
