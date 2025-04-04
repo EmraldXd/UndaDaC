@@ -148,10 +148,12 @@ public class SpecimenAuto extends LinearOpMode{
                         new ParallelAction(
                              new SequentialAction(
                                         linearSlides.home(),
-                                        claw.angle()
+                                        claw.angle(),
+                                        claw.ejectSpecimen()
                              ),
                                 pushSpecimens
-                        )
+                        ),
+                    claw.reset();
                 )
         );
 
