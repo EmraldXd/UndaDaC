@@ -152,8 +152,7 @@ public class SpecimenAuto extends LinearOpMode{
                                         claw.ejectSpecimen()
                              ),
                                 pushSpecimens
-                        ),
-                    claw.reset();
+                        )
                 )
         );
 

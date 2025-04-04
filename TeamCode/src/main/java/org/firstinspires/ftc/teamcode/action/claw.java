@@ -42,7 +42,6 @@ public class claw {
         isTurned = false;
         clawToggle = false;
         //Turn Servos on
-        eject.setPosition(0);
         clawAngle.setPosition(0);
         if(up) {
             clawJoint.setPosition(0.0);
@@ -125,11 +124,11 @@ public class claw {
         }
     }
 
-    public void ejection(boolean pressed) {
-        if(pressed) {
-            eject.setPosition(/*outer position*/);
+    public void ejection(float position) {
+        if(position > 0.5) {
+            eject.setPosition(0.5);
         } else {
-            eject.setPosision(0);
+            eject.setPosition(0);
         }
     }
 

@@ -11,7 +11,7 @@ public class clawRR {
     Servo joint;
     Servo claw;
     Servo angler;
-    Servo ejecter:
+    Servo ejecter;
     double placeholder;
     public clawRR(HardwareMap hardwareMap) {
         joint = hardwareMap.get(Servo.class, "Joint");
@@ -27,6 +27,7 @@ public class clawRR {
             claw.setPosition(0);
             joint.setPosition(0);
             angler.setPosition(0);
+            ejecter.setPosition(0);
             if(claw.getPosition() == 0 && angler.getPosition() == 0 && joint.getPosition() == 0){
                 return false;
             } else {
@@ -73,8 +74,11 @@ public class clawRR {
         private boolean finished;
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            ejecter.setPosition(/*open Position*/);
-            return false;
+            ejecter.setPosition(1);
+            if(ejecter.getPosition() == 1) {
+                return false;
+            }
+            return true;
         }
     }
 
@@ -83,7 +87,10 @@ public class clawRR {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             ejecter.setPosition(0);
-            return false;
+            if(ejecter.getPosition() == 0) {
+                return false;
+            }
+            return true;
         }
     }
 
