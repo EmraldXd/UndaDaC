@@ -11,11 +11,13 @@ public class clawRR {
     Servo joint;
     Servo claw;
     Servo angler;
+    Servo ejecter:
     double placeholder;
     public clawRR(HardwareMap hardwareMap) {
         joint = hardwareMap.get(Servo.class, "Joint");
         claw = hardwareMap.get(Servo.class, "Claw");
         angler = hardwareMap.get(Servo.class, "Angler");
+        ejecter = hardwareMap.get(Servo.class, "Eject");
     }
 
     /** This initializes the claw for RoadRunner usage */
@@ -67,6 +69,24 @@ public class clawRR {
         }
     }
 
+    public class eject implements Action {
+        private boolean finished;
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            ejecter.setPosition(/*open Position*/);
+            return false;
+        }
+    }
+
+    public class reset implements Action {
+        private boolean finished;
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            ejecter.setPosition(0);
+            return false;
+        }
+    }
+
     public Action initializer() {
         return new initialize();
     }
@@ -80,4 +100,12 @@ public class clawRR {
     }
 
     public Action open() {return new prep();}
+
+    public Action ejectSpecimen() {
+        return new eject();
+    }
+
+    public Action resetEject() {
+        return new reset();
+    }
 }
